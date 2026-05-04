@@ -9,6 +9,7 @@ using UnityEngine.Tilemaps;
 // The algorithm continues until a certain percentage of the grid is filled with floor tiles.
 public class WalkerGenerator : MonoBehaviour
 {
+    // FSM to determine if a tile is a floor, wall or empty
     public enum Grid
     {
         FLOOR,
@@ -124,7 +125,7 @@ public class WalkerGenerator : MonoBehaviour
                 }
             }
 
-            // call chances method and update walkers
+            // call chances methods for random walker algorithm and update position of them
             ChanceToRemove();
             ChanceToChangeDir();
             ChanceToCreate();
@@ -247,9 +248,8 @@ public class WalkerGenerator : MonoBehaviour
         CreateNodes();
     }
 
-    
 
-
+    // Instanciate a node prefab for every floor tile and add it to a list of nodes.
     void CreateNodes()
     {
         for (int x = 0; x < gridHandler.GetLength(0); x++)
@@ -266,6 +266,7 @@ public class WalkerGenerator : MonoBehaviour
         CreateConnections();
     }
 
+    // loop through list of nodes and call ConnectNodes() if they are next to each other
     void CreateConnections()
     {
         for(int i = 0; i < nodeList.Count; i++)
