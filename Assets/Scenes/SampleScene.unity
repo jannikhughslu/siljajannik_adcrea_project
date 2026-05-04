@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 42280233}
   - component: {fileID: 42280232}
+  - component: {fileID: 42280234}
   m_Layer: 0
   m_Name: MapGenerator
   m_TagString: Untagged
@@ -150,13 +151,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilemap: {fileID: 843181819}
   floorTile: {fileID: 11400000, guid: 3ea52188fe7254c5e93be5661febe3d0, type: 2}
-  wallTile: {fileID: 11400000, guid: ab40de2f0156a4e208fad1347f35016b, type: 2}
+  wallTileTop: {fileID: 11400000, guid: c157953b9e95f4d2fa541e39fd8c4c6d, type: 2}
+  wallTileLeft: {fileID: 11400000, guid: 455f30f06f6d34d15991cdb7cb8c1f4f, type: 2}
+  wallTileRight: {fileID: 11400000, guid: 8ecaf8414bfb24e2dac967c19481c9e2, type: 2}
+  wallTileBottom: {fileID: 11400000, guid: 51696b8cdf8634e489afb9651e1a6d08, type: 2}
   mapWidth: 60
   mapHeight: 40
   maxWalkers: 10
   tileCount: 0
   fillPercent: 0.4
   waitTime: 0.05
+  nodeprefab: {fileID: 5364794213345872380, guid: 356aa33330e004449b431b345ff17b12, type: 3}
+  nodeList: []
+  player: {fileID: 2447051926150249370, guid: df5161f3ad2824c4782307fbf5ec0af4, type: 3}
 --- !u!4 &42280233
 Transform:
   m_ObjectHideFlags: 0
@@ -172,6 +179,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &42280234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42280231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef7c67c6c7d098a44b8bd7f143bc3dbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

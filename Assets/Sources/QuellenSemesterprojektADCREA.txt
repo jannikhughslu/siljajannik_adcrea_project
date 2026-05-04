@@ -1,0 +1,8 @@
+Quellen Semesterprojekt ADCREA:
+
+Random Walker and Map Generation:
+https://www.youtube.com/watch?v=rqecAdEGW6I&t=62s
+https://www.youtube.com/watch?v=6B7yOnqpK_Y
+
+Adding Nodes to the tiles:
+https://www.youtube.com/watch?v=UHnOW-OimLQ

@@ -17,16 +17,31 @@ public class WalkerGenerator : MonoBehaviour
     }
 
     public Grid[,] gridHandler;
+
     public List<WalkerObject> walkers;
     public Tilemap tilemap;
     public Tile floorTile;
-    public Tile wallTile;
+    public Tile wallTileTop;
+    public Tile wallTileLeft;
+    public Tile wallTileRight;
+    public Tile wallTileBottom;
+
     public int mapWidth = 30;
     public int mapHeight = 30;
+
     public int maxWalkers = 10;
     public int tileCount = default;
     public float fillPercent = 0.4f;
     public float waitTime = 0.05f;
+
+    public Node nodeprefab;
+    public List<Node> nodeList;
+
+    public Player_Controller player;
+
+    private bool canDrawGizmos;
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -199,25 +214,25 @@ public class WalkerGenerator : MonoBehaviour
 
                     if (gridHandler[x + 1, y] == Grid.EMPTY)
                     {
-                        tilemap.SetTile(new Vector3Int(x + 1, y, 0), wallTile);
+                        tilemap.SetTile(new Vector3Int(x + 1, y, 0), wallTileRight);
                         gridHandler[x + 1, y] = Grid.WALL;
                         hasCreatedWall = true;
                     }
                     if (gridHandler[x - 1, y] == Grid.EMPTY)
                     {
-                        tilemap.SetTile(new Vector3Int(x - 1, y, 0), wallTile);
+                        tilemap.SetTile(new Vector3Int(x - 1, y, 0), wallTileLeft);
                         gridHandler[x - 1, y] = Grid.WALL;
                         hasCreatedWall = true;
                     }
                     if (gridHandler[x, y + 1] == Grid.EMPTY)
                     {
-                        tilemap.SetTile(new Vector3Int(x, y + 1, 0), wallTile);
+                        tilemap.SetTile(new Vector3Int(x, y + 1, 0), wallTileTop);
                         gridHandler[x, y + 1] = Grid.WALL;
                         hasCreatedWall = true;
                     }
                     if (gridHandler[x, y - 1] == Grid.EMPTY)
                     {
-                        tilemap.SetTile(new Vector3Int(x, y - 1, 0), wallTile);
+                        tilemap.SetTile(new Vector3Int(x, y - 1, 0), wallTileBottom);
                         gridHandler[x, y - 1] = Grid.WALL;
                         hasCreatedWall = true;
                     }
@@ -229,11 +244,81 @@ public class WalkerGenerator : MonoBehaviour
                 }
             }
         }
+        CreateNodes();
     }
 
-    // Update is called once per frame
-    void Update()
+    
+
+
+    void CreateNodes()
     {
+        for (int x = 0; x < gridHandler.GetLength(0); x++)
+        {
+            for (int y = 0; y < gridHandler.GetLength(1); y++)
+            {
+                if (gridHandler[x, y] == Grid.FLOOR)
+                {
+                    Node newNode = Instantiate(nodeprefab, new Vector2(x + 0.5f, y + 0.5f), Quaternion.identity);
+                    nodeList.Add(newNode);
+                }
+            }
+        }
+        CreateConnections();
+    }
+
+    void CreateConnections()
+    {
+        for(int i = 0; i < nodeList.Count; i++)
+        {
+            for (int j = i+1; j < nodeList.Count; j++)
+            {
+                // if the distance between two nodes is smaller than or equal to 1, connect them both ways
+                if (Vector2.Distance(nodeList[i].transform.position, nodeList[j].transform.position) <= 1.0f)
+                {
+                    ConnectNodes(nodeList[i], nodeList[j]);
+                    ConnectNodes(nodeList[j], nodeList[i]);
+                }
+            }
+        }
+        canDrawGizmos = true;
+        SpawnPlayer();
+    }
+
+    // connect two nodes by adding the target node to the neighbours list of the from node
+    void ConnectNodes(Node from, Node to)
+    {
+        if(from == to){return;}
+
+        from.neighbours.Add(to);
+    }
+
+
+    // Spawn the player at a random node
+    void SpawnPlayer()
+    {
+        Node randNode = nodeList[Random.Range(0, nodeList.Count)];
+
+        Player_Controller newPlayer = Instantiate(player, randNode.transform.position, Quaternion.identity);
+
+        newPlayer.currentNode = randNode;
         
     }
+
+    // draw lines between connected nodes in the editor
+    /*private void OnDrawGizmos()
+    {
+        if (canDrawGizmos)
+        {
+            Gizmos.color = Color.blue;
+            for(int i = 0; i < nodeList.Count; i++)
+            {
+                for(int j = 0; j < nodeList[i].neighbours.Count; j++)
+                {
+                    Gizmos.DrawLine(nodeList[i].transform.position, nodeList[i].neighbours[j].transform.position);
+                }
+            }
+        }
+    }*/
+
+
 }
