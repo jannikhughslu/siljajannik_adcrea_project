@@ -14,18 +14,31 @@ public class WalkerGenerator : MonoBehaviour
     {
         FLOOR,
         WALL,
-        EMPTY
+        EMPTY,
+        TERRAIN
     }
 
     public Grid[,] gridHandler;
 
+    public enum Terrain
+    {
+        BUSH,
+        ROCK,
+        FOREST
+    }
+
+    public Terrain terrainType;
+
     public List<WalkerObject> walkers;
+    public List<TerrainObject> terrainWalkers;
     public Tilemap tilemap;
     public Tile floorTile;
     public Tile wallTileTop;
     public Tile wallTileLeft;
     public Tile wallTileRight;
     public Tile wallTileBottom;
+    // terrain Tiles
+    public Sprite TerrainSprite;
 
     public int mapWidth = 30;
     public int mapHeight = 30;
@@ -33,6 +46,7 @@ public class WalkerGenerator : MonoBehaviour
     public int maxWalkers = 10;
     public int tileCount = default;
     public float fillPercent = 0.4f;
+    public float terrainPercent;
     public float waitTime = 0.05f;
 
     public Node nodeprefab;
@@ -250,6 +264,73 @@ public class WalkerGenerator : MonoBehaviour
     }
 
 
+    void PlaceTerrainSprites(Sprite terrainSprite)
+    {
+
+    }
+    void TerrainWalker(Terrain terrainType, Sprite terrainSprite, float terrainPercent)
+    {
+        // get random position for terrain walker
+        terrainStartX = Random.Range(1, gridHandler.GetLength(0) - 1);
+        terrainStartY = Random.Range(1, gridHandler.GetLength(1) - 1);
+        terrainElevation = 1f;
+        // create walker for the terrain and set it to a random position on the tilemap
+        TerrainObject terrainWalker = new TerrainObject(new Vector2(terrainStartX, terrainStartY), GetDirection(), 0.5f);
+        gridHandler[terrainStartX, terrainStartY] = Terrain.terrainType;
+        
+        //Set the sprite of the terrain tile based on the terrain type
+        GameObject terrainObject = new GameObject(Terrain.terrainType.ToString());
+        // set the position of the terrain object to the position of the terrain walker
+        terrainObject.transform.position = new Vector3Int(terrainStartX, terrainStartY, TerrainElevation);
+        terrainObject.AddComponent<SpriteRenderer>().sprite = terrainSprite;
+        
+        terrainWalkers.Add(terrainWalker);
+        
+        tileCount++;
+
+        // compare tile count in the total size of grid to the fill percentage
+        // loop until desired fill percentage is reached
+        while ((float)tileCount / (float)(gridHandler.GetLength(0) * gridHandler.GetLength(1)) < terrainPercent)
+        {
+            bool hasCreatedTerrain = false;
+
+            foreach (TerrainObject curWalker in terrainWalkers)
+            {
+                // get current position of walker and check if its a floor tile
+                Vector3Int curPos = new Vector3Int((int)curWalker.position.x, (int)curWalker.position.y, 0);
+                if (gridHandler[curPos.x, curPos.y] == Grid.FLOOR)
+                {
+                    tilemap.SetTile(curPos, terrainTile);
+                    tileCount++;
+                    gridHandler[curPos.x, curPos.y] = Grid.TERRAIN;
+                    hasCreatedTerrain = true;
+                }
+                // if tile is empty, move walker back to previous position and change direction
+                if (gridHandler[curPos.x, curPos.y] == Grid.EMPTY)
+                {
+                    curPos.x = curPos.x -1;
+                    curWalker.direction = GetDirection();
+                }
+            }
+        }
+    }
+    
+    void CreateTerrain()
+    {
+        switch (terrainType)
+        {
+            case Terrain.BUSH:
+                StartCoroutine(CreateTerrain(terrainType, bushTile, terrainPercent));
+                break;
+            case Terrain.FOREST:
+                StartCoroutine(CreateTerrain(terrainType, woodsTile, terrainPercent));
+                break;
+            case Terrain.ROCK:
+                StartCoroutine(CreateTerrain(terrainType, rocksTile, terrainPercent));
+                break;
+        }
+    }
+
     // Instanciate a node prefab for every floor tile and add it to a list of nodes.
     void CreateNodes()
     {
@@ -321,6 +402,7 @@ public class WalkerGenerator : MonoBehaviour
             }
         }
     }*/
+
 
 
 }
