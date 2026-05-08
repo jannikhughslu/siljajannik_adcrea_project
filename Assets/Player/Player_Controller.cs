@@ -39,7 +39,7 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    /*private void OnDrawGizmos()
     {
         if (path.Count > 0)
         {
@@ -49,5 +49,5 @@ public class Player_Controller : MonoBehaviour
                 Gizmos.DrawLine(path[i].transform.position, path[i - 1].transform.position);
             }
         }
-    }
+    }*/
 }

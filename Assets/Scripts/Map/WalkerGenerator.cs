@@ -205,14 +205,20 @@ public class WalkerGenerator : MonoBehaviour
     // If there are, set them to wall tiles.
     IEnumerator CreateWalls()
     {
-        for (int x = 0; x < gridHandler.GetLength(0) - 1; x++)
+        for (int y = 0; y < gridHandler.GetLength(1) - 1; y++)
         {
-            for (int y = 0; y < gridHandler.GetLength(1) - 1; y++)
+            for (int x = 0; x < gridHandler.GetLength(0) - 1; x++)
             {
                 if (gridHandler[x, y] == Grid.FLOOR)
                 {
                     bool hasCreatedWall = false;
 
+                    if (gridHandler[x, y - 1] == Grid.EMPTY)
+                    {
+                        tilemap.SetTile(new Vector3Int(x, y - 1, 0), wallTileBottom);
+                        gridHandler[x, y - 1] = Grid.WALL;
+                        hasCreatedWall = true;
+                    }
                     if (gridHandler[x + 1, y] == Grid.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x + 1, y, 0), wallTileRight);
@@ -231,12 +237,7 @@ public class WalkerGenerator : MonoBehaviour
                         gridHandler[x, y + 1] = Grid.WALL;
                         hasCreatedWall = true;
                     }
-                    if (gridHandler[x, y - 1] == Grid.EMPTY)
-                    {
-                        tilemap.SetTile(new Vector3Int(x, y - 1, 0), wallTileBottom);
-                        gridHandler[x, y - 1] = Grid.WALL;
-                        hasCreatedWall = true;
-                    }
+                    
 
                     if (hasCreatedWall)
                     {

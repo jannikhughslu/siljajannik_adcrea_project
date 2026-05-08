@@ -17,5 +17,4 @@ public class Node : MonoBehaviour
     {
         return gScore + hScore;
     }
-    
 }
