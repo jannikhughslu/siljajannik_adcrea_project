@@ -155,9 +155,9 @@ MonoBehaviour:
   wallTileLeft: {fileID: 11400000, guid: 455f30f06f6d34d15991cdb7cb8c1f4f, type: 2}
   wallTileRight: {fileID: 11400000, guid: 8ecaf8414bfb24e2dac967c19481c9e2, type: 2}
   wallTileBottom: {fileID: 11400000, guid: 51696b8cdf8634e489afb9651e1a6d08, type: 2}
-  mapWidth: 60
-  mapHeight: 40
-  maxWalkers: 10
+  mapWidth: 30
+  mapHeight: 30
+  maxWalkers: 5
   tileCount: 0
   fillPercent: 0.4
   waitTime: 0.05
