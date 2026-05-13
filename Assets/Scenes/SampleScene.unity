@@ -171,11 +171,15 @@ MonoBehaviour:
   - {fileID: 11400000, guid: afa7c11d56433f44d91f0f738f537276, type: 2}
   - {fileID: 11400000, guid: bb12bfb59431c334492e7d8afcc5fc3b, type: 2}
   - {fileID: 11400000, guid: 8e306f6c28271c24eb1dead6f63703ac, type: 2}
+  terrainSprites:
+  - {fileID: -2460423728298319197, guid: bad5af2cc15ebe844a2c63bc6ee7a593, type: 3}
   mapWidth: 70
   mapHeight: 50
   maxWalkers: 5
   tileCount: 0
+  terrainTileCount: 0
   fillPercent: 0.3
+  terrainPercent: 0
   waitTime: 0.05
   nodeprefab: {fileID: 5364794213345872380, guid: 356aa33330e004449b431b345ff17b12, type: 3}
   nodeList: []

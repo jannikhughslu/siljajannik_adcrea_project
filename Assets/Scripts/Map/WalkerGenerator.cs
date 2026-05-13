@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -13,35 +14,28 @@ public class WalkerGenerator : MonoBehaviour
     public enum Grid
     {
         FLOOR,
-        EMPTY
-        WALL,
         EMPTY,
-        TERRAIN
-    }
-
-    public Grid[,] gridHandler;
-
-    public enum Terrain
-    {
         BUSH,
         ROCK,
         FOREST
     }
 
-    public Terrain terrainType;
-
+    public Grid[,] gridHandler;
     public List<WalkerObject> walkers;
-    public List<TerrainObject> terrainWalkers;
+    public List<WalkerObject> terrainWalkers;
     public Tilemap tilemap;
     public Tile[] tiles;
+    public Sprite[] terrainSprites;
     // terrain Tiles
-    public Sprite TerrainSprite;
+private float terrainElevation = 1f;
+    private Vector2 terrainStartPos;
 
     public int mapWidth = 30;
     public int mapHeight = 30;
 
     public int maxWalkers = 10;
     public int tileCount = default;
+    public int terrainTileCount = default;
     public float fillPercent = 0.4f;
     public float terrainPercent;
     public float waitTime = 0.05f;
@@ -59,6 +53,7 @@ public class WalkerGenerator : MonoBehaviour
     void Start()
     {
         InizializeGrid();
+        //CreateTerrain();
     }
 
     void InizializeGrid()
@@ -77,7 +72,7 @@ public class WalkerGenerator : MonoBehaviour
                 tilemap.SetTile(new Vector3Int(x, y, -2), tiles[0]);
             }
         }
-
+ 
         // get center of tilemap
         Vector3Int tileCenter = new Vector3Int(mapWidth / 2, mapHeight / 2, 0);
 
@@ -203,6 +198,7 @@ public class WalkerGenerator : MonoBehaviour
         for (int i = 0; i < walkers.Count; i++)
         {
             WalkerObject curWalker = walkers[i];
+
             curWalker.position += curWalker.direction;
             // clamp the position of the walker to the bounds of the grid, so it doesn't go out of bounds
             // Clamp(value, min, max) 
@@ -282,100 +278,94 @@ public class WalkerGenerator : MonoBehaviour
 
                     // set Boarders with trhee sides
                     // left, right, top // path down
-                    if (gridHandler[x - 1 , y] == Grid.EMPTY && gridHandler[x + 1, y] == Grid.EMPTY && gridHandler[x , y + 1] == Grid.EMPTY)
+                    if (gridHandler[x - 1, y] == Grid.EMPTY && gridHandler[x + 1, y] == Grid.EMPTY && gridHandler[x, y + 1] == Grid.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[12]);
                     }
                     // left, up, bottom
                     // path right
-                    if (gridHandler[x - 1 , y] == Grid.EMPTY && gridHandler[x , y + 1] == Grid.EMPTY && gridHandler[x , y - 1] == Grid.EMPTY)
+                    if (gridHandler[x - 1, y] == Grid.EMPTY && gridHandler[x, y + 1] == Grid.EMPTY && gridHandler[x, y - 1] == Grid.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[15]);
                     }
                     // top, bottom, right
                     // path left
-                    if (gridHandler[x + 1 , y] == Grid.EMPTY && gridHandler[x, y + 1] == Grid.EMPTY && gridHandler[x , y - 1] == Grid.EMPTY)
+                    if (gridHandler[x + 1, y] == Grid.EMPTY && gridHandler[x, y + 1] == Grid.EMPTY && gridHandler[x, y - 1] == Grid.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[13]);
                     }
                     // right, bottom, left
                     // path up
-                    if (gridHandler[x - 1 , y] == Grid.EMPTY && gridHandler[x + 1, y] == Grid.EMPTY && gridHandler[x , y - 1] == Grid.EMPTY)
+                    if (gridHandler[x - 1, y] == Grid.EMPTY && gridHandler[x + 1, y] == Grid.EMPTY && gridHandler[x, y - 1] == Grid.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[14]);
                     }
-                    
+
                 }
             }
         }
         CreateNodes();
     }
 
-
-    void PlaceTerrainSprites(Sprite terrainSprite)
+    void UpdateTerrainPosition()
     {
+        for (int i = 0; i < terrainWalkers.Count; i++)
+        {
+            WalkerObject newTerrainWalker = terrainWalkers[i];
 
+            newTerrainWalker.position += newTerrainWalker.direction;
+            // clamp the position of the walker to the bounds of the grid, so it doesn't go out of bounds
+            // Clamp(value, min, max) 
+            newTerrainWalker.position.x = Mathf.Clamp(newTerrainWalker.position.x, 1, gridHandler.GetLength(0) - 2);
+            newTerrainWalker.position.y = Mathf.Clamp(newTerrainWalker.position.y, 1, gridHandler.GetLength(1) - 2);
+            terrainWalkers[i] = newTerrainWalker;
+        }
     }
-    void TerrainWalker(Terrain terrainType, Sprite terrainSprite, float terrainPercent)
+   void PlaceTerrainSprite()
+    {
+        //Set the sprite of the terrain tile based on the terrain type
+        GameObject terrainObject = new GameObject(terrainSprites[0].ToString());
+        // set the position of the terrain object to the position of the terrain walker
+        terrainObject.transform.position = new Vector3(terrainStartPos.x, terrainStartPos.y, terrainElevation);
+        //set the corresponding sprite for the terrain type
+        terrainObject.AddComponent<SpriteRenderer>().sprite = terrainSprites[0];
+    }
+    
+    void SpawnTerrainWalker()
     {
         // get random position for terrain walker
-        terrainStartX = Random.Range(1, gridHandler.GetLength(0) - 1);
-        terrainStartY = Random.Range(1, gridHandler.GetLength(1) - 1);
-        terrainElevation = 1f;
+        terrainStartPos = new Vector3(Random.Range(1, gridHandler.GetLength(0) - 1), Random.Range(1, gridHandler.GetLength(1) - 1), terrainElevation);
         // create walker for the terrain and set it to a random position on the tilemap
-        TerrainObject terrainWalker = new TerrainObject(new Vector2(terrainStartX, terrainStartY), GetDirection(), 0.5f);
-        gridHandler[terrainStartX, terrainStartY] = Terrain.terrainType;
+        gridHandler[(int)terrainStartPos.x, (int)terrainStartPos.y] = Grid.BUSH;
+        // create new terrain walker and add it to the list of terrain walkers
+        WalkerObject newTerrainWalker = new WalkerObject(terrainStartPos, GetDirection(), 0.5f);
+        PlaceTerrainSprite();
+        terrainWalkers.Add(newTerrainWalker);
+        terrainTileCount++;
         
-        //Set the sprite of the terrain tile based on the terrain type
-        GameObject terrainObject = new GameObject(Terrain.terrainType.ToString());
-        // set the position of the terrain object to the position of the terrain walker
-        terrainObject.transform.position = new Vector3Int(terrainStartX, terrainStartY, TerrainElevation);
-        terrainObject.AddComponent<SpriteRenderer>().sprite = terrainSprite;
-        
-        terrainWalkers.Add(terrainWalker);
-        
-        tileCount++;
-
+    }
+    void CreateTerrain()
+    {
+        SpawnTerrainWalker();
         // compare tile count in the total size of grid to the fill percentage
         // loop until desired fill percentage is reached
-        while ((float)tileCount / (float)(gridHandler.GetLength(0) * gridHandler.GetLength(1)) < terrainPercent)
+        while ((float)terrainTileCount / (float)(gridHandler.GetLength(0) * gridHandler.GetLength(1)) < terrainPercent)
         {
             bool hasCreatedTerrain = false;
 
-            foreach (TerrainObject curWalker in terrainWalkers)
+            foreach (WalkerObject newTerrainWalker in terrainWalkers)
             {
-                // get current position of walker and check if its a floor tile
-                Vector3Int curPos = new Vector3Int((int)curWalker.position.x, (int)curWalker.position.y, 0);
+                // get current position of walker and check if its not a floor tile
+                Vector3Int curPos = new Vector3Int((int)newTerrainWalker.position.x, (int)newTerrainWalker.position.y, 0);
                 if (gridHandler[curPos.x, curPos.y] == Grid.FLOOR)
                 {
-                    tilemap.SetTile(curPos, terrainTile);
-                    tileCount++;
-                    gridHandler[curPos.x, curPos.y] = Grid.TERRAIN;
+                    PlaceTerrainSprite();
+                    terrainTileCount++;
+                    gridHandler[curPos.x, curPos.y] = Grid.BUSH;
                     hasCreatedTerrain = true;
                 }
-                // if tile is empty, move walker back to previous position and change direction
-                if (gridHandler[curPos.x, curPos.y] == Grid.EMPTY)
-                {
-                    curPos.x = curPos.x -1;
-                    curWalker.direction = GetDirection();
-                }
             }
-        }
-    }
-    
-    void CreateTerrain()
-    {
-        switch (terrainType)
-        {
-            case Terrain.BUSH:
-                StartCoroutine(CreateTerrain(terrainType, bushTile, terrainPercent));
-                break;
-            case Terrain.FOREST:
-                StartCoroutine(CreateTerrain(terrainType, woodsTile, terrainPercent));
-                break;
-            case Terrain.ROCK:
-                StartCoroutine(CreateTerrain(terrainType, rocksTile, terrainPercent));
-                break;
+            UpdateTerrainPosition();
         }
     }
 
@@ -399,9 +389,9 @@ public class WalkerGenerator : MonoBehaviour
     // loop through list of nodes and call ConnectNodes() if they are next to each other
     void CreateConnections()
     {
-        for(int i = 0; i < nodeList.Count; i++)
+        for (int i = 0; i < nodeList.Count; i++)
         {
-            for (int j = i+1; j < nodeList.Count; j++)
+            for (int j = i + 1; j < nodeList.Count; j++)
             {
                 // if the distance between two nodes is smaller than or equal to 1, connect them both ways
                 if (Vector2.Distance(nodeList[i].transform.position, nodeList[j].transform.position) <= 1.5f)
@@ -418,7 +408,7 @@ public class WalkerGenerator : MonoBehaviour
     // connect two nodes by adding the target node to the neighbours list of the from node
     void ConnectNodes(Node from, Node to)
     {
-        if(from == to){return;}
+        if (from == to) { return; }
 
         from.neighbours.Add(to);
     }
@@ -432,7 +422,7 @@ public class WalkerGenerator : MonoBehaviour
         Player_Controller newPlayer = Instantiate(player, randNode.transform.position, Quaternion.identity);
 
         newPlayer.currentNode = randNode;
-        
+
     }
 
     // draw lines between connected nodes in the editor
@@ -441,15 +431,14 @@ public class WalkerGenerator : MonoBehaviour
         if (canDrawGizmos)
         {
             Gizmos.color = Color.blue;
-            for(int i = 0; i < nodeList.Count; i++)
+            for (int i = 0; i < nodeList.Count; i++)
             {
-                for(int j = 0; j < nodeList[i].neighbours.Count; j++)
+                for (int j = 0; j < nodeList[i].neighbours.Count; j++)
                 {
                     Gizmos.DrawLine(nodeList[i].transform.position, nodeList[i].neighbours[j].transform.position);
                 }
             }
         }
     }
-
 
 }
