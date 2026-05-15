@@ -23,6 +23,7 @@ public class WalkerGenerator : MonoBehaviour
     public Grid[,] gridHandler;
     public List<WalkerObject> walkers;
     public Tilemap tilemap;
+    [SerializeField]
     public Tile[] tiles;
     public Sprite[] terrainSprites;
     public GameObject bushPrefab;
@@ -43,7 +44,7 @@ private float terrainElevation = 1f;
     public Node nodeprefab;
     public List<Node> nodeList;
 
-    public Player_Controller player;
+    // public Player_Controller player;
 
     private bool canDrawGizmos;
 
@@ -304,8 +305,8 @@ private float terrainElevation = 1f;
                 }
             }
         }
-        CreateTerrain();
-        //CreateNodes();
+        //CreateTerrain();
+        CreateNodes();
     }
 
     void UpdateTerrainPosition()
@@ -404,7 +405,7 @@ private float terrainElevation = 1f;
             }
         }
         canDrawGizmos = true;
-        SpawnPlayer();
+        //SpawnPlayer();
     }
 
     // connect two nodes by adding the target node to the neighbours list of the from node
@@ -417,7 +418,7 @@ private float terrainElevation = 1f;
 
 
     // Spawn the player at a random node
-    void SpawnPlayer()
+    /*void SpawnPlayer()
     {
         Node randNode = nodeList[Random.Range(0, nodeList.Count)];
 
@@ -425,10 +426,10 @@ private float terrainElevation = 1f;
 
         newPlayer.currentNode = randNode;
 
-    }
+    }*/
 
     // draw lines between connected nodes in the editor
-    private void OnDrawGizmos()
+    /*private void OnDrawGizmos()
     {
         if (canDrawGizmos)
         {
@@ -441,6 +442,6 @@ private float terrainElevation = 1f;
                 }
             }
         }
-    }
+    }*/
 
 }
