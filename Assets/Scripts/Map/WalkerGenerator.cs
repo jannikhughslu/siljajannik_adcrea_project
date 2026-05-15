@@ -1,8 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+
+// FSM to determine if a tile is a floor, Forrest, Rock, Bush or empty
+public enum GridMap
+{
+    FLOOR,
+    EMPTY,
+    BUSH,
+    ROCK,
+    FOREST
+}
 
 // This class generates a random floor layout using a random walker algorithm
 // Multiple walkers are created and move around the grid, creating floor tiles as they go. 
@@ -10,26 +21,20 @@ using UnityEngine.Tilemaps;
 // The algorithm continues until a certain percentage of the grid is filled with floor tiles.
 public class WalkerGenerator : MonoBehaviour
 {
-    // FSM to determine if a tile is a floor, Forrest, Rock, Bush or empty
-    public enum Grid
-    {
-        FLOOR,
-        EMPTY,
-        BUSH,
-        ROCK,
-        FOREST
-    }
 
-    public Grid[,] gridHandler;
+
+    public GridMap[,] gridHandler;
     public List<WalkerObject> walkers;
     public Tilemap tilemap;
     [SerializeField]
     public Tile[] tiles;
-    public Sprite[] terrainSprites;
+
+    // terrain Prefab
     public GameObject bushPrefab;
-    // terrain Tiles
-private float terrainElevation = 1f;
-    private Vector2 terrainStartPos;
+    public GameObject[] trees;
+    public GameObject[] rocks;
+
+    private int terrainElevation = 2;
 
     public int mapWidth = 30;
     public int mapHeight = 30;
@@ -38,8 +43,8 @@ private float terrainElevation = 1f;
     public int tileCount = default;
     public int terrainTileCount = default;
     public float fillPercent = 0.4f;
-    public float terrainPercent;
-    public float waitTime = 0.01f;
+    private float terrainPercent = 0.3f;
+    public float waitTime = 0.0f;
 
     public Node nodeprefab;
     public List<Node> nodeList;
@@ -54,13 +59,13 @@ private float terrainElevation = 1f;
     void Start()
     {
         InizializeGrid();
-        
+
     }
 
     void InizializeGrid()
     {
         // set grid dimensions
-        gridHandler = new Grid[mapWidth, mapHeight];
+        gridHandler = new GridMap[mapWidth, mapHeight];
         // create list of walkers
         walkers = new List<WalkerObject>();
 
@@ -69,17 +74,17 @@ private float terrainElevation = 1f;
         {
             for (int y = 0; y < gridHandler.GetLength(1); y++)
             {
-                gridHandler[x, y] = Grid.EMPTY;
+                gridHandler[x, y] = GridMap.EMPTY;
                 tilemap.SetTile(new Vector3Int(x, y, -2), tiles[0]);
             }
         }
- 
+
         // get center of tilemap
         Vector3Int tileCenter = new Vector3Int(mapWidth / 2, mapHeight / 2, 0);
 
         // create first walker and set it to center of tilemap
-        WalkerObject currWalker = new WalkerObject(new Vector2(tileCenter.x, tileCenter.y), GetDirection(), 0.5f);
-        gridHandler[tileCenter.x, tileCenter.y] = Grid.FLOOR;
+        WalkerObject currWalker = new WalkerObject(new Vector2(tileCenter.x, tileCenter.y), GetDirection(), 0.5f, GridMap.FLOOR);
+        gridHandler[tileCenter.x, tileCenter.y] = GridMap.FLOOR;
         tilemap.SetTile(tileCenter, tiles[1]);
         walkers.Add(currWalker);
 
@@ -124,11 +129,11 @@ private float terrainElevation = 1f;
             {
                 // get current position of walker and check if its not a floor tile
                 Vector3Int curPos = new Vector3Int((int)curWalker.position.x, (int)curWalker.position.y, 0);
-                if (gridHandler[curPos.x, curPos.y] != Grid.FLOOR)
+                if (gridHandler[curPos.x, curPos.y] != GridMap.FLOOR)
                 {
                     tilemap.SetTile(curPos, tiles[1]);
                     tileCount++;
-                    gridHandler[curPos.x, curPos.y] = Grid.FLOOR;
+                    gridHandler[curPos.x, curPos.y] = GridMap.FLOOR;
                     hasCreatedFloor = true;
                 }
             }
@@ -187,7 +192,7 @@ private float terrainElevation = 1f;
                 Vector2 newDir = GetDirection();
                 Vector2 newPos = walkers[i].position;
 
-                WalkerObject newWalker = new WalkerObject(newPos, newDir, 0.5f);
+                WalkerObject newWalker = new WalkerObject(newPos, newDir, 0.5f, GridMap.FLOOR);
                 walkers.Add(newWalker);
             }
         }
@@ -218,86 +223,86 @@ private float terrainElevation = 1f;
         {
             for (int y = 0; y < gridHandler.GetLength(1) - 1; y++)
             {
-                if (gridHandler[x, y] == Grid.FLOOR)
+                if (gridHandler[x, y] == GridMap.FLOOR)
                 {
 
                     // Set Boarders, Bottom, Right, Left, Top
-                    if (gridHandler[x, y - 1] == Grid.EMPTY)
+                    if (gridHandler[x, y - 1] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[7]);
                         tilemap.SetTile(new Vector3Int(x, y, -1), tiles[Random.Range(16, 20)]);
-                        //gridHandler[x, y - 1] = Grid.WALL;
+                        //gridHandler[x, y - 1] = GridMap.WALL;
                     }
-                    if (gridHandler[x + 1, y] == Grid.EMPTY)
+                    if (gridHandler[x + 1, y] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[5]);
                         tilemap.SetTile(new Vector3Int(x, y, -1), tiles[Random.Range(16, 20)]);
 
-                        // gridHandler[x + 1, y] = Grid.WALL;
+                        // gridHandler[x + 1, y] = GridMap.WALL;
                     }
-                    if (gridHandler[x - 1, y] == Grid.EMPTY)
+                    if (gridHandler[x - 1, y] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[9]);
                         tilemap.SetTile(new Vector3Int(x, y, -1), tiles[Random.Range(16, 20)]);
-                        // gridHandler[x - 1, y] = Grid.WALL;
+                        // gridHandler[x - 1, y] = GridMap.WALL;
                     }
-                    if (gridHandler[x, y + 1] == Grid.EMPTY)
+                    if (gridHandler[x, y + 1] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[3]);
                         tilemap.SetTile(new Vector3Int(x, y, -1), tiles[Random.Range(16, 20)]);
-                        // gridHandler[x, y + 1] = Grid.WALL;
+                        // gridHandler[x, y + 1] = GridMap.WALL;
                     }
 
                     // set Boarders with cornerns
-                    if (gridHandler[x, y - 1] == Grid.EMPTY && gridHandler[x + 1, y] == Grid.EMPTY)
+                    if (gridHandler[x, y - 1] == GridMap.EMPTY && gridHandler[x + 1, y] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[6]);
                     }
-                    if (gridHandler[x, y - 1] == Grid.EMPTY && gridHandler[x - 1, y] == Grid.EMPTY)
+                    if (gridHandler[x, y - 1] == GridMap.EMPTY && gridHandler[x - 1, y] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[8]);
                     }
-                    if (gridHandler[x, y + 1] == Grid.EMPTY && gridHandler[x + 1, y] == Grid.EMPTY)
+                    if (gridHandler[x, y + 1] == GridMap.EMPTY && gridHandler[x + 1, y] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[4]);
                     }
-                    if (gridHandler[x, y + 1] == Grid.EMPTY && gridHandler[x - 1, y] == Grid.EMPTY)
+                    if (gridHandler[x, y + 1] == GridMap.EMPTY && gridHandler[x - 1, y] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[2]);
-                        // gridHandler[x + 1, y] = Grid.WALL;
+                        // gridHandler[x + 1, y] = GridMap.WALL;
                     }
 
                     // set Boarders with two sides
-                    if (gridHandler[x, y - 1] == Grid.EMPTY && gridHandler[x, y + 1] == Grid.EMPTY)
+                    if (gridHandler[x, y - 1] == GridMap.EMPTY && gridHandler[x, y + 1] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[11]);
                     }
-                    if (gridHandler[x + 1, y] == Grid.EMPTY && gridHandler[x - 1, y] == Grid.EMPTY)
+                    if (gridHandler[x + 1, y] == GridMap.EMPTY && gridHandler[x - 1, y] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[10]);
                     }
 
                     // set Boarders with trhee sides
                     // left, right, top // path down
-                    if (gridHandler[x - 1, y] == Grid.EMPTY && gridHandler[x + 1, y] == Grid.EMPTY && gridHandler[x, y + 1] == Grid.EMPTY)
+                    if (gridHandler[x - 1, y] == GridMap.EMPTY && gridHandler[x + 1, y] == GridMap.EMPTY && gridHandler[x, y + 1] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[12]);
                     }
                     // left, up, bottom
                     // path right
-                    if (gridHandler[x - 1, y] == Grid.EMPTY && gridHandler[x, y + 1] == Grid.EMPTY && gridHandler[x, y - 1] == Grid.EMPTY)
+                    if (gridHandler[x - 1, y] == GridMap.EMPTY && gridHandler[x, y + 1] == GridMap.EMPTY && gridHandler[x, y - 1] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[15]);
                     }
                     // top, bottom, right
                     // path left
-                    if (gridHandler[x + 1, y] == Grid.EMPTY && gridHandler[x, y + 1] == Grid.EMPTY && gridHandler[x, y - 1] == Grid.EMPTY)
+                    if (gridHandler[x + 1, y] == GridMap.EMPTY && gridHandler[x, y + 1] == GridMap.EMPTY && gridHandler[x, y - 1] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[13]);
                     }
                     // right, bottom, left
                     // path up
-                    if (gridHandler[x - 1, y] == Grid.EMPTY && gridHandler[x + 1, y] == Grid.EMPTY && gridHandler[x, y - 1] == Grid.EMPTY)
+                    if (gridHandler[x - 1, y] == GridMap.EMPTY && gridHandler[x + 1, y] == GridMap.EMPTY && gridHandler[x, y - 1] == GridMap.EMPTY)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), tiles[14]);
                     }
@@ -305,71 +310,81 @@ private float terrainElevation = 1f;
                 }
             }
         }
-        //CreateTerrain();
-        CreateNodes();
+        CreateTerrain();
+        
     }
 
-    void UpdateTerrainPosition()
-    {
-        //=========== Überprüfen ob Tile Floor wenn ja --> Direction wechseln Wenn nein:
-        for (int i = 0; i < walkers.Count; i++)
-        {
-            WalkerObject currTerrainWalker = walkers[i];
 
-            currTerrainWalker.position += currTerrainWalker.direction;
-            // clamp the position of the walker to the bounds of the grid, so it doesn't go out of bounds
-            // Clamp(value, min, max) 
-            currTerrainWalker.position.x = Mathf.Clamp(currTerrainWalker.position.x, 1, gridHandler.GetLength(0) - 2);
-            currTerrainWalker.position.y = Mathf.Clamp(currTerrainWalker.position.y, 1, gridHandler.GetLength(1) - 2);
-            walkers[i] = currTerrainWalker;
+    void PlaceTerrainSprite(GridMap terrainType, Vector3Int position)
+    {
+        if (terrainType == GridMap.BUSH)
+        {
+            Instantiate(bushPrefab, new Vector2(position.x + Random.Range(0f, 0.7f), position.y + Random.Range(0f, 0.7f)), Quaternion.identity);
+        }
+        if (terrainType == GridMap.ROCK)
+        {
+            Instantiate(rocks[Random.Range(0, 3)], new Vector2(position.x + Random.Range(0f, 0.7f), position.y + Random.Range(0f, 0.7f)), Quaternion.identity);
+        }
+        if (terrainType == GridMap.FOREST)
+        {
+            Instantiate(trees[Random.Range(0, 2)], new Vector2(position.x + Random.Range(0f, 0.7f), position.y + 1.4f), Quaternion.identity);
         }
     }
-   void PlaceTerrainSprite()
+
+    void SpawnTerrainWalker(GridMap terrainType)
     {
-        Vector3 Pos = new Vector3(terrainStartPos.x, terrainStartPos.y, terrainElevation);
-        Instantiate(bushPrefab, Pos,Quaternion.identity);
+        int numOfWalker = Random.Range(1, 4);
+        int walkerCount = 0;
+
+
+        //Creates a random number of Walkers. Min 2, Max 4
+        // As long as the Random number of walker is not reached...
+        while (walkerCount <= numOfWalker)
+        {
+            // get random position for a terrain walker
+            Vector3Int pos = new Vector3Int(Random.Range(1, gridHandler.GetLength(0) - 1), Random.Range(1, gridHandler.GetLength(1) - 1), terrainElevation);
+
+            // if position is on a Floor Tile create a walker
+            if (gridHandler[pos.x, pos.y] == GridMap.FLOOR)
+            {
+
+                // create new terrain walker and add it to the list of terrain walkers
+                WalkerObject newTerrainWalker = new WalkerObject(new Vector2(pos.x, pos.y), GetDirection(), 0.5f, terrainType);
+                PlaceTerrainSprite(terrainType, pos);
+                gridHandler[pos.x, pos.y] = terrainType;
+                terrainTileCount++;
+
+                walkers.Add(newTerrainWalker);
+                walkerCount++;
+            }
+        }
     }
-    
-    void SpawnTerrainWalker(Grid terrainType)
-    {
-        // get random position for terrain walker
-        terrainStartPos = new Vector3(Random.Range(1, gridHandler.GetLength(0) - 1), Random.Range(1, gridHandler.GetLength(1) - 1), terrainElevation);
-        // create walker for the terrain and set it to a random position on the tilemap
-        gridHandler[(int)terrainStartPos.x, (int)terrainStartPos.y] = terrainType;
-        // create new terrain walker and add it to the list of terrain walkers
-        WalkerObject newTerrainWalker = new WalkerObject(terrainStartPos, GetDirection(), 0.5f);
-        PlaceTerrainSprite();
-        walkers.Add(newTerrainWalker);
-        terrainTileCount++;
-    }
+
     void CreateTerrain()
     {
         walkers.Clear();
-        Debug.Log(walkers.Count);
+        //Randomly Spawnes a number of Walker between 2 an 4 for each Terrain Type (max. 12 Walkers)
+        SpawnTerrainWalker(GridMap.BUSH);
+        SpawnTerrainWalker(GridMap.FOREST);
+        SpawnTerrainWalker(GridMap.ROCK);
 
-        //====for schleife mit anzahl walker wenn floor
-        //for (int i = 0; i<randomTerrainRange)
-        SpawnTerrainWalker(Grid.BUSH);
-        // compare tile count in the total size of grid to the fill percentage
-        // loop until desired fill percentage is reached
-        while ((float)terrainTileCount / (float)(gridHandler.GetLength(0) * gridHandler.GetLength(1)) < terrainPercent)
+        while ((float)terrainTileCount / (float)tileCount < (float)terrainPercent)
         {
-            bool hasCreatedTerrain = false;
-
             foreach (WalkerObject currTerrainWalker in walkers)
             {
                 // get current position of walker and check if its not a floor tile
                 Vector3Int curPos = new Vector3Int((int)currTerrainWalker.position.x, (int)currTerrainWalker.position.y, 0);
-                if (gridHandler[curPos.x, curPos.y] == Grid.FLOOR)
+                if (gridHandler[curPos.x, curPos.y] == GridMap.FLOOR)
                 {
-                    PlaceTerrainSprite();
+                    PlaceTerrainSprite(currTerrainWalker.gridType, curPos);
                     terrainTileCount++;
-                    gridHandler[curPos.x, curPos.y] = Grid.BUSH;
-                    hasCreatedTerrain = true;
+                    gridHandler[curPos.x, curPos.y] = currTerrainWalker.gridType;
                 }
             }
-            UpdateTerrainPosition();
+            ChanceToChangeDir();
+            UpdatePosition();
         }
+        CreateNodes();
     }
 
     // Instanciate a node prefab for every floor tile and add it to a list of nodes.
@@ -379,7 +394,7 @@ private float terrainElevation = 1f;
         {
             for (int y = 0; y < gridHandler.GetLength(1); y++)
             {
-                if (gridHandler[x, y] == Grid.FLOOR)
+                if (gridHandler[x, y] == GridMap.FLOOR)
                 {
                     Node newNode = Instantiate(nodeprefab, new Vector2(x + 0.5f, y + 0.5f), Quaternion.identity);
                     nodeList.Add(newNode);

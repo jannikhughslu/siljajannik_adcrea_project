@@ -50,14 +50,17 @@ TemporaryDependencyNodeTargetIdentifier=netstandard2.1
 /warnaserror+:NU1605
 
 [sourceFiles]
-Assets/
+Assets/Scripts/
+ Algorhythms/AStarManager.cs
+ Map/
+  Node.cs
+  WalkerGenerator.cs
+  WalkerObject.cs
+  YSorter.cs
+ Painters/
+  SpritePainter.cs
+  TilemapPainter.cs
  Player/Player_Controller.cs
- Scripts/
-  Algorhythms/AStarManager.cs
-  Map/
-   Node.cs
-   WalkerGenerator.cs
-   WalkerObject.cs
 Temp/obj/Assembly-CSharp/.NETStandard,Version=v2.1.AssemblyAttributes.cs
 
 [metadataReferences]

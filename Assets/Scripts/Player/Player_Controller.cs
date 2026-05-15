@@ -45,7 +45,7 @@ public class Player_Controller : MonoBehaviour
         // Move player
         playerRB.linearVelocity = new Vector2(horizontalInput, verticalInput) * speed;
 
-        CreatePath();
+        //CreatePath();
     }
 
     void FlipPlayer()

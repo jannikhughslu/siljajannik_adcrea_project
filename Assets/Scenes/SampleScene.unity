@@ -171,17 +171,21 @@ MonoBehaviour:
   - {fileID: 11400000, guid: afa7c11d56433f44d91f0f738f537276, type: 2}
   - {fileID: 11400000, guid: bb12bfb59431c334492e7d8afcc5fc3b, type: 2}
   - {fileID: 11400000, guid: 8e306f6c28271c24eb1dead6f63703ac, type: 2}
-  terrainSprites:
-  - {fileID: -2460423728298319197, guid: bad5af2cc15ebe844a2c63bc6ee7a593, type: 3}
-  bushPrefab: {fileID: 0}
+  bushPrefab: {fileID: 2495560268967211850, guid: 60df322e9cfb8f448b87fd50bfc1dddc, type: 3}
+  trees:
+  - {fileID: 8244771637098319898, guid: 042a5bc6e9da4eb45a6da18e2d239b55, type: 3}
+  - {fileID: 2434734051478339092, guid: 90ff814d15b1a114a8a401b3e6ca28ee, type: 3}
+  rocks:
+  - {fileID: 3408952171744800046, guid: 35f5f7b37a989f74e9ee3a653730f17e, type: 3}
+  - {fileID: 3455157008954625180, guid: 0f7b6f4757f70cc4eb0eb416ab825961, type: 3}
+  - {fileID: 1158353920183084679, guid: 9a207606dd2b9bb45bc0a9215a50af90, type: 3}
   mapWidth: 70
   mapHeight: 50
   maxWalkers: 5
   tileCount: 0
   terrainTileCount: 0
-  fillPercent: 0.3
-  terrainPercent: 0
-  waitTime: 0.05
+  fillPercent: 0.4
+  waitTime: 0
   nodeprefab: {fileID: 5364794213345872380, guid: 356aa33330e004449b431b345ff17b12, type: 3}
   nodeList: []
   player: {fileID: 1313212601}
