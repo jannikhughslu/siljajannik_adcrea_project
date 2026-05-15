@@ -184,6 +184,7 @@ MonoBehaviour:
   waitTime: 0.05
   nodeprefab: {fileID: 5364794213345872380, guid: 356aa33330e004449b431b345ff17b12, type: 3}
   nodeList: []
+  player: {fileID: 1313212601}
 --- !u!4 &42280233
 Transform:
   m_ObjectHideFlags: 0
@@ -655,7 +656,9 @@ MonoBehaviour:
   playerRB: {fileID: 1313212602}
   playerAnimator: {fileID: 1313212600}
   currentNode: {fileID: 0}
+  targetNode: {fileID: 0}
   path: []
+  nodeReachDistance: 0.15
 --- !u!50 &1313212602
 Rigidbody2D:
   serializedVersion: 5

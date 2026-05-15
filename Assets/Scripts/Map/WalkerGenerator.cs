@@ -44,7 +44,7 @@ private float terrainElevation = 1f;
     public Node nodeprefab;
     public List<Node> nodeList;
 
-    // public Player_Controller player;
+    public Player_Controller player;
 
     private bool canDrawGizmos;
 
@@ -405,7 +405,7 @@ private float terrainElevation = 1f;
             }
         }
         canDrawGizmos = true;
-        //SpawnPlayer();
+        SpawnPlayerAtCenter();
     }
 
     // connect two nodes by adding the target node to the neighbours list of the from node
@@ -417,16 +417,35 @@ private float terrainElevation = 1f;
     }
 
 
-    // Spawn the player at a random node
-    /*void SpawnPlayer()
+    // Move the existing player to the center node after the map is ready
+    void SpawnPlayerAtCenter()
     {
-        Node randNode = nodeList[Random.Range(0, nodeList.Count)];
+        if (player == null || nodeList == null || nodeList.Count == 0)
+        {
+            return;
+        }
 
-        Player_Controller newPlayer = Instantiate(player, randNode.transform.position, Quaternion.identity);
+        Vector2Int center = new Vector2Int(mapWidth / 2, mapHeight / 2);
+        Node centerNode = null;
 
-        newPlayer.currentNode = randNode;
+        for (int i = 0; i < nodeList.Count; i++)
+        {
+            Vector2 nodePosition = nodeList[i].transform.position;
+            if ((int)nodePosition.x == center.x && (int)nodePosition.y == center.y)
+            {
+                centerNode = nodeList[i];
+                break;
+            }
+        }
 
-    }*/
+        if (centerNode == null)
+        {
+            centerNode = nodeList[0];
+        }
+
+        player.transform.position = centerNode.transform.position;
+        player.currentNode = centerNode;
+    }
 
     // draw lines between connected nodes in the editor
     /*private void OnDrawGizmos()
