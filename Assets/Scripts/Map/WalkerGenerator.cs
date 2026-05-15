@@ -22,10 +22,10 @@ public class WalkerGenerator : MonoBehaviour
 
     public Grid[,] gridHandler;
     public List<WalkerObject> walkers;
-    public List<WalkerObject> terrainWalkers;
     public Tilemap tilemap;
     public Tile[] tiles;
     public Sprite[] terrainSprites;
+    public GameObject bushPrefab;
     // terrain Tiles
 private float terrainElevation = 1f;
     private Vector2 terrainStartPos;
@@ -38,7 +38,7 @@ private float terrainElevation = 1f;
     public int terrainTileCount = default;
     public float fillPercent = 0.4f;
     public float terrainPercent;
-    public float waitTime = 0.05f;
+    public float waitTime = 0.01f;
 
     public Node nodeprefab;
     public List<Node> nodeList;
@@ -53,7 +53,7 @@ private float terrainElevation = 1f;
     void Start()
     {
         InizializeGrid();
-        //CreateTerrain();
+        
     }
 
     void InizializeGrid()
@@ -304,59 +304,61 @@ private float terrainElevation = 1f;
                 }
             }
         }
-        CreateNodes();
+        CreateTerrain();
+        //CreateNodes();
     }
 
     void UpdateTerrainPosition()
     {
-        for (int i = 0; i < terrainWalkers.Count; i++)
+        //=========== Überprüfen ob Tile Floor wenn ja --> Direction wechseln Wenn nein:
+        for (int i = 0; i < walkers.Count; i++)
         {
-            WalkerObject newTerrainWalker = terrainWalkers[i];
+            WalkerObject currTerrainWalker = walkers[i];
 
-            newTerrainWalker.position += newTerrainWalker.direction;
+            currTerrainWalker.position += currTerrainWalker.direction;
             // clamp the position of the walker to the bounds of the grid, so it doesn't go out of bounds
             // Clamp(value, min, max) 
-            newTerrainWalker.position.x = Mathf.Clamp(newTerrainWalker.position.x, 1, gridHandler.GetLength(0) - 2);
-            newTerrainWalker.position.y = Mathf.Clamp(newTerrainWalker.position.y, 1, gridHandler.GetLength(1) - 2);
-            terrainWalkers[i] = newTerrainWalker;
+            currTerrainWalker.position.x = Mathf.Clamp(currTerrainWalker.position.x, 1, gridHandler.GetLength(0) - 2);
+            currTerrainWalker.position.y = Mathf.Clamp(currTerrainWalker.position.y, 1, gridHandler.GetLength(1) - 2);
+            walkers[i] = currTerrainWalker;
         }
     }
    void PlaceTerrainSprite()
     {
-        //Set the sprite of the terrain tile based on the terrain type
-        GameObject terrainObject = new GameObject(terrainSprites[0].ToString());
-        // set the position of the terrain object to the position of the terrain walker
-        terrainObject.transform.position = new Vector3(terrainStartPos.x, terrainStartPos.y, terrainElevation);
-        //set the corresponding sprite for the terrain type
-        terrainObject.AddComponent<SpriteRenderer>().sprite = terrainSprites[0];
+        Vector3 Pos = new Vector3(terrainStartPos.x, terrainStartPos.y, terrainElevation);
+        Instantiate(bushPrefab, Pos,Quaternion.identity);
     }
     
-    void SpawnTerrainWalker()
+    void SpawnTerrainWalker(Grid terrainType)
     {
         // get random position for terrain walker
         terrainStartPos = new Vector3(Random.Range(1, gridHandler.GetLength(0) - 1), Random.Range(1, gridHandler.GetLength(1) - 1), terrainElevation);
         // create walker for the terrain and set it to a random position on the tilemap
-        gridHandler[(int)terrainStartPos.x, (int)terrainStartPos.y] = Grid.BUSH;
+        gridHandler[(int)terrainStartPos.x, (int)terrainStartPos.y] = terrainType;
         // create new terrain walker and add it to the list of terrain walkers
         WalkerObject newTerrainWalker = new WalkerObject(terrainStartPos, GetDirection(), 0.5f);
         PlaceTerrainSprite();
-        terrainWalkers.Add(newTerrainWalker);
+        walkers.Add(newTerrainWalker);
         terrainTileCount++;
-        
     }
     void CreateTerrain()
     {
-        SpawnTerrainWalker();
+        walkers.Clear();
+        Debug.Log(walkers.Count);
+
+        //====for schleife mit anzahl walker wenn floor
+        //for (int i = 0; i<randomTerrainRange)
+        SpawnTerrainWalker(Grid.BUSH);
         // compare tile count in the total size of grid to the fill percentage
         // loop until desired fill percentage is reached
         while ((float)terrainTileCount / (float)(gridHandler.GetLength(0) * gridHandler.GetLength(1)) < terrainPercent)
         {
             bool hasCreatedTerrain = false;
 
-            foreach (WalkerObject newTerrainWalker in terrainWalkers)
+            foreach (WalkerObject currTerrainWalker in walkers)
             {
                 // get current position of walker and check if its not a floor tile
-                Vector3Int curPos = new Vector3Int((int)newTerrainWalker.position.x, (int)newTerrainWalker.position.y, 0);
+                Vector3Int curPos = new Vector3Int((int)currTerrainWalker.position.x, (int)currTerrainWalker.position.y, 0);
                 if (gridHandler[curPos.x, curPos.y] == Grid.FLOOR)
                 {
                     PlaceTerrainSprite();
