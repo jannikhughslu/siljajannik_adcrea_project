@@ -129,6 +129,9 @@ GameObject:
   m_Component:
   - component: {fileID: 42280233}
   - component: {fileID: 42280232}
+  - component: {fileID: 42280235}
+  - component: {fileID: 42280237}
+  - component: {fileID: 42280236}
   - component: {fileID: 42280234}
   m_Layer: 0
   m_Name: MapGenerator
@@ -149,28 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b1788418059a3c489c7f9151d0a7233, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilemap: {fileID: 843181819}
-  tiles:
-  - {fileID: 11400000, guid: 801a5f589c62eef4ba5024214ef17acb, type: 2}
-  - {fileID: 11400000, guid: f3f1ba40c64d58a4a98915b3649ffa54, type: 2}
-  - {fileID: 11400000, guid: e0c56c7583c147048b37e18d5e697b8f, type: 2}
-  - {fileID: 11400000, guid: c85d188b8fe4b2e40b4e38b1b37fe523, type: 2}
-  - {fileID: 11400000, guid: 461a786b7d6989149840abadf720faf4, type: 2}
-  - {fileID: 11400000, guid: 7b1a1ab1577de4a439680aaf5d8ef00f, type: 2}
-  - {fileID: 11400000, guid: 0c6a09f05cc5d8a4b9911396b77680dd, type: 2}
-  - {fileID: 11400000, guid: a6313ba33195be44788387d83c845698, type: 2}
-  - {fileID: 11400000, guid: dd335df83062acc41ae93998af10859f, type: 2}
-  - {fileID: 11400000, guid: 841d92ad27e747e429fbde0c2c85098b, type: 2}
-  - {fileID: 11400000, guid: 52ca0445322328444b97a3c3f8b1d3a2, type: 2}
-  - {fileID: 11400000, guid: c3a9d8857d9de964ea66283e5e35c3e8, type: 2}
-  - {fileID: 11400000, guid: 94cbdaf7b183d5b46a9ffb67e75951fb, type: 2}
-  - {fileID: 11400000, guid: 8d1887a2cc76dd84bbbbe8527b8093a3, type: 2}
-  - {fileID: 11400000, guid: d1d487f9dd810be49aed0e09169249a8, type: 2}
-  - {fileID: 11400000, guid: 339ab3632ca8b4b4fbd8b7821a876151, type: 2}
-  - {fileID: 11400000, guid: 1dd60d0ffc0c9004e9930c0bd0245176, type: 2}
-  - {fileID: 11400000, guid: afa7c11d56433f44d91f0f738f537276, type: 2}
-  - {fileID: 11400000, guid: bb12bfb59431c334492e7d8afcc5fc3b, type: 2}
-  - {fileID: 11400000, guid: 8e306f6c28271c24eb1dead6f63703ac, type: 2}
+  tmPainter: {fileID: 42280235}
+  spPainter: {fileID: 42280237}
+  nodeGenerator: {fileID: 42280236}
   bushPrefab: {fileID: 2495560268967211850, guid: 60df322e9cfb8f448b87fd50bfc1dddc, type: 3}
   trees:
   - {fileID: 8244771637098319898, guid: 042a5bc6e9da4eb45a6da18e2d239b55, type: 3}
@@ -186,9 +170,6 @@ MonoBehaviour:
   terrainTileCount: 0
   fillPercent: 0.4
   waitTime: 0
-  nodeprefab: {fileID: 5364794213345872380, guid: 356aa33330e004449b431b345ff17b12, type: 3}
-  nodeList: []
-  player: {fileID: 1313212601}
 --- !u!4 &42280233
 Transform:
   m_ObjectHideFlags: 0
@@ -214,6 +195,87 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ef7c67c6c7d098a44b8bd7f143bc3dbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &42280235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42280231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b535d90698351284cbcc969a58e87fc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemap: {fileID: 843181819}
+  tileEntries:
+  - id: 0
+    tile: {fileID: 11400000, guid: 801a5f589c62eef4ba5024214ef17acb, type: 2}
+  - id: 16
+    tile: {fileID: 11400000, guid: 1dd60d0ffc0c9004e9930c0bd0245176, type: 2}
+  - id: 17
+    tile: {fileID: 11400000, guid: afa7c11d56433f44d91f0f738f537276, type: 2}
+  - id: 18
+    tile: {fileID: 11400000, guid: bb12bfb59431c334492e7d8afcc5fc3b, type: 2}
+  - id: 19
+    tile: {fileID: 11400000, guid: 8e306f6c28271c24eb1dead6f63703ac, type: 2}
+  - id: 1
+    tile: {fileID: 11400000, guid: f3f1ba40c64d58a4a98915b3649ffa54, type: 2}
+  - id: 2
+    tile: {fileID: 11400000, guid: c85d188b8fe4b2e40b4e38b1b37fe523, type: 2}
+  - id: 3
+    tile: {fileID: 11400000, guid: 461a786b7d6989149840abadf720faf4, type: 2}
+  - id: 4
+    tile: {fileID: 11400000, guid: 7b1a1ab1577de4a439680aaf5d8ef00f, type: 2}
+  - id: 5
+    tile: {fileID: 11400000, guid: 0c6a09f05cc5d8a4b9911396b77680dd, type: 2}
+  - id: 6
+    tile: {fileID: 11400000, guid: a6313ba33195be44788387d83c845698, type: 2}
+  - id: 7
+    tile: {fileID: 11400000, guid: dd335df83062acc41ae93998af10859f, type: 2}
+  - id: 8
+    tile: {fileID: 11400000, guid: 841d92ad27e747e429fbde0c2c85098b, type: 2}
+  - id: 9
+    tile: {fileID: 11400000, guid: e0c56c7583c147048b37e18d5e697b8f, type: 2}
+  - id: 10
+    tile: {fileID: 11400000, guid: 52ca0445322328444b97a3c3f8b1d3a2, type: 2}
+  - id: 11
+    tile: {fileID: 11400000, guid: c3a9d8857d9de964ea66283e5e35c3e8, type: 2}
+  - id: 12
+    tile: {fileID: 11400000, guid: 8d1887a2cc76dd84bbbbe8527b8093a3, type: 2}
+  - id: 13
+    tile: {fileID: 11400000, guid: 94cbdaf7b183d5b46a9ffb67e75951fb, type: 2}
+  - id: 14
+    tile: {fileID: 11400000, guid: 339ab3632ca8b4b4fbd8b7821a876151, type: 2}
+  - id: 15
+    tile: {fileID: 11400000, guid: d1d487f9dd810be49aed0e09169249a8, type: 2}
+--- !u!114 &42280236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42280231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 848573d59c6abca469c2bb53306b64ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeprefab: {fileID: 5364794213345872380, guid: 356aa33330e004449b431b345ff17b12, type: 3}
+  nodeList: []
+  player: {fileID: 1313212601}
+--- !u!114 &42280237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42280231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af67c55e34d3944da7a7667eda320a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &519420028
@@ -598,6 +660,7 @@ GameObject:
   - component: {fileID: 1313212602}
   - component: {fileID: 1313212601}
   - component: {fileID: 1313212600}
+  - component: {fileID: 1313212605}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -770,7 +833,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 7384290322352760091, guid: 0505cf46dcd784e559fa26016d355ac0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -782,6 +845,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1313212605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1313212598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 651d17d260857ab4fbd1053e32e3b1f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sortingMultiplier: 10
 --- !u!1 &1975528141
 GameObject:
   m_ObjectHideFlags: 0

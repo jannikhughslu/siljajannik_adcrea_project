@@ -1,0 +1,23 @@
+public enum TileId
+    {
+        WATER_FULL,
+        GRASS_FULL,
+        GRASS_T,
+        GRASS_RT,
+        GRASS_R,
+        GRASS_RB,
+        GRASS_B,
+        GRASS_LB,
+        GRASS_L,
+        GRASS_LT,
+        GRASS_LR,
+        GRASS_TB,
+        GRASS_TRB,
+        GRASS_LTR,
+        GRASS_LTB,
+        GRASS_RBL,
+        FOAM_1,
+        FOAM_2,
+        FOAM_3,
+        FOAM_4,
+    }
