@@ -7,8 +7,8 @@ public class Player_Controller : MonoBehaviour
     public float speed = 5.0f;
     // facing Direction = player scale X value. 1 = facingRight
     public int facingDirection = 1;
-    public Rigidbody2D playerRB;
-    public Animator playerAnimator;
+    private Rigidbody2D playerRB;
+    private Animator playerAnimator;
 
     // Node related variables
     private Node[] cachedNodes;
@@ -16,6 +16,14 @@ public class Player_Controller : MonoBehaviour
     public Node targetNode;
     public List<Node> path = new List<Node>();
     public float nodeReachDistance = 0.15f;
+
+    
+    
+    void Start()
+    {
+        playerRB = GetComponent<Rigidbody2D>();
+        playerAnimator = GetComponent<Animator>();
+    }
     
 
 
@@ -45,7 +53,7 @@ public class Player_Controller : MonoBehaviour
         // Move player
         playerRB.linearVelocity = new Vector2(horizontalInput, verticalInput) * speed;
 
-        //CreatePath();
+        CreatePath();
     }
 
     void FlipPlayer()
@@ -61,7 +69,9 @@ public class Player_Controller : MonoBehaviour
     {
         if (cachedNodes == null || cachedNodes.Length == 0){
             cachedNodes = FindObjectsByType<Node>(FindObjectsSortMode.None);
-
+            if (cachedNodes == null || cachedNodes.Length == 0){
+                return;
+            }
         }
 
         if (currentNode == null)

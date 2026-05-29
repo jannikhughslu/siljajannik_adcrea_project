@@ -25,11 +25,11 @@ public class NodeGenerator : MonoBehaviour
                 }
             }
         }
-        CreateConnections();
+        CreateConnections(grid);
     }
 
     // loop through list of nodes and call ConnectNodes() if they are next to each other
-    void CreateConnections()
+    void CreateConnections(GridMap[,] grid)
     {
         for (int i = 0; i < nodeList.Count; i++)
         {
@@ -43,7 +43,7 @@ public class NodeGenerator : MonoBehaviour
                 }
             }
         }
-        // SpawnPlayerAtCenter();
+        SpawnPlayerAtCenter(grid);
     }
 
     // connect two nodes by adding the target node to the neighbours list of the from node
@@ -71,14 +71,14 @@ public class NodeGenerator : MonoBehaviour
     
 
     // Move the existing player to the center node after the map is ready
-    /*void SpawnPlayerAtCenter()
+    void SpawnPlayerAtCenter(GridMap[,] grid)
     {
         if (player == null || nodeList == null || nodeList.Count == 0)
         {
             return;
         }
 
-        Vector2Int center = new Vector2Int(mapWidth / 2, mapHeight / 2);
+        Vector2Int center = new Vector2Int(grid.GetLength(0) / 2, grid.GetLength(1) / 2);
         Node centerNode = null;
 
         for (int i = 0; i < nodeList.Count; i++)
@@ -98,5 +98,5 @@ public class NodeGenerator : MonoBehaviour
 
         player.transform.position = centerNode.transform.position;
         player.currentNode = centerNode;
-    }*/
+    }
 }
