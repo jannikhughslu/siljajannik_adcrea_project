@@ -82,7 +82,8 @@ public class PlayerController : MonoBehaviour
     // keeps the path up to date based on the node the player is currently closest to
     public void CreatePath()
     {
-        if (cachedNodes == null || cachedNodes.Length == 0){
+        if (cachedNodes == null || cachedNodes.Length == 0)
+        {
             cachedNodes = FindObjectsByType<Node>(FindObjectsSortMode.None);
             if (cachedNodes == null || cachedNodes.Length == 0){
                 return;

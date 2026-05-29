@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 42280236}
   - component: {fileID: 42280234}
   - component: {fileID: 42280238}
+  - component: {fileID: 42280239}
   m_Layer: 0
   m_Name: MapGenerator
   m_TagString: Untagged
@@ -290,6 +291,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 698a97f198bf7304cb4d392576cb0838, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &42280239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42280231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b24174a3d4e514091262b9995b142c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &519420028

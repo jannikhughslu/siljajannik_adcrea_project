@@ -139,7 +139,8 @@ public class WalkerManager : MonoBehaviour
         nodeGenerator.CreateNodes(gridHandler);
         
         Node center = nodeGenerator.GetNodeAtCenter(gridHandler);
-        Node farthestNode = DFSManager.instance.FindFarthestNode(center);
+        // Node farthestNode = DFSManager.instance.FindFarthestNode(center);
+        Node farthestNode = BFSManager.instance.FindFarthestNode(center);
         spPainter.SpawnGoldStone(farthestNode.transform.position);
 
         player.SetPlayerNodes(center, farthestNode);
