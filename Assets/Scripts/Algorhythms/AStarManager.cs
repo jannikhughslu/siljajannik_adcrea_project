@@ -70,7 +70,7 @@ public class AStarManager : MonoBehaviour
             foreach(Node neighbour in currentNode.neighbours)
             {
                 // heldGScore is used to check if the path from the start node to the neighbour through the current node is better than any previously known path to the neighbour.
-                float heldGScore = currentNode.gScore + Vector2.Distance(currentNode.transform.position, neighbour.transform.position);
+                float heldGScore = currentNode.gScore + Vector2.Distance(currentNode.transform.position, neighbour.transform.position) * neighbour.weight;
                 if (heldGScore < neighbour.gScore)
                 {
                     neighbour.cameFrom = currentNode;

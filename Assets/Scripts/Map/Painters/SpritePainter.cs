@@ -2,15 +2,29 @@ using UnityEngine;
 
 public class SpritePainter : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    // terrain Prefab
+    public GameObject bushPrefab;
+    public GameObject[] trees;
+    public GameObject[] rocks;
+    
+
+    public void PlaceTerrainSprite(Vector3Int position, GridMap terrainType)
     {
-        
+        float randomX = Random.Range(0f, 0.7f);
+        float randomY = Random.Range(0f, 0.7f);
+
+        if (terrainType == GridMap.BUSH)
+        {
+            Instantiate(bushPrefab, new Vector2(position.x + randomX, position.y + randomY), Quaternion.identity);
+        }
+        if (terrainType == GridMap.ROCK)
+        {
+            Instantiate(rocks[Random.Range(0, rocks.Length)], new Vector2(position.x + randomX, position.y + randomY), Quaternion.identity);
+        }
+        if (terrainType == GridMap.FOREST)
+        {
+            Instantiate(trees[Random.Range(0, trees.Length)], new Vector2(position.x + randomX, position.y + randomY), Quaternion.identity);
+        }
     }
 }

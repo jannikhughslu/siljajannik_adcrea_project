@@ -9,7 +9,7 @@ using UnityEngine.Tilemaps;
 // Multiple walkers are created and move around the grid, creating floor tiles as they go. 
 // The walkers have a chance to change direction, additionally create new walkers, or be removed. 
 // The algorithm continues until a certain percentage of the grid is filled with floor tiles.
-public class WalkerGenerator : MonoBehaviour
+public class WalkerManager : MonoBehaviour
 {
     // Walker fields
     public GridMap[,] gridHandler;
@@ -19,13 +19,6 @@ public class WalkerGenerator : MonoBehaviour
     public TilemapPainter tmPainter;
     public SpritePainter spPainter;
     public NodeGenerator nodeGenerator;
-
-    // terrain Prefab
-    public GameObject bushPrefab;
-    public GameObject[] trees;
-    public GameObject[] rocks;
-
-    private int terrainElevation = 2;
 
     public int mapWidth = 30;
     public int mapHeight = 30;
@@ -106,7 +99,6 @@ public class WalkerGenerator : MonoBehaviour
             ChanceToCreate();
             UpdatePosition();
 
-
             if (hasCreatedFloor)
             {
                 yield return new WaitForSeconds(waitTime);
@@ -133,7 +125,7 @@ public class WalkerGenerator : MonoBehaviour
                 Vector3Int curPos = new Vector3Int((int)currTerrainWalker.position.x, (int)currTerrainWalker.position.y, 0);
                 if (gridHandler[curPos.x, curPos.y] == GridMap.FLOOR)
                 {
-                    PlaceTerrainSprite(curPos, currTerrainWalker.gridType);
+                    spPainter.PlaceTerrainSprite(curPos, currTerrainWalker.gridType);
                     terrainTileCount++;
                     gridHandler[curPos.x, curPos.y] = currTerrainWalker.gridType;
                 }
@@ -145,13 +137,41 @@ public class WalkerGenerator : MonoBehaviour
         canDrawGizmos = true;
     }
 
+     void SpawnTerrainWalker(GridMap terrainType)
+    {
+        int numOfWalker = Random.Range(2, 5);
+        int walkerCount = 0;
+
+
+        //Creates a random number of Walkers. Min 2, Max 4
+        // As long as the Random number of walker is not reached...
+        while (walkerCount <= numOfWalker)
+        {
+            // get random position for a terrain walker
+            Vector3Int pos = new Vector3Int(Random.Range(1, gridHandler.GetLength(0) - 1), Random.Range(1, gridHandler.GetLength(1) - 1), 0);
+
+            // if position is on a Floor Tile create a walker
+            if (gridHandler[pos.x, pos.y] == GridMap.FLOOR)
+            {
+
+                // create new terrain walker and add it to the list of terrain walkers
+                WalkerObject newTerrainWalker = new WalkerObject(new Vector2(pos.x, pos.y), GetDirection(), 0.5f, terrainType);
+                spPainter.PlaceTerrainSprite(pos, terrainType);
+                gridHandler[pos.x, pos.y] = terrainType;
+                terrainTileCount++;
+
+                walkers.Add(newTerrainWalker);
+                walkerCount++;
+            }
+        }
+    }
+
+
+
     Vector2 GetDirection()
     {
-        // generiert Zufallszahl 0-1 multipliert das mit 3.99
-        // und FloorToInt runded es auf die nächste kleinere Zahl ab.
-        // so entstehen 4 mögliche Werte: 0, 1, 2, 3
-        int rand = Mathf.FloorToInt(Random.value * 3.99f);
-        // int rand = Random.Range(0, 4);
+        // generiert eine Zahl zwischen 0 und 3
+        int rand = Random.Range(0, 4);
 
 
         switch (rand)
@@ -227,55 +247,6 @@ public class WalkerGenerator : MonoBehaviour
             curWalker.position.x = Mathf.Clamp(curWalker.position.x, 1, gridHandler.GetLength(0) - 2);
             curWalker.position.y = Mathf.Clamp(curWalker.position.y, 1, gridHandler.GetLength(1) - 2);
             walkers[i] = curWalker;
-        }
-    }
-
-    
-    void PlaceTerrainSprite(Vector3Int position, GridMap terrainType)
-    {
-        float randomX = Random.Range(0f, 0.7f);
-        float randomY = Random.Range(0f, 0.7f);
-
-        if (terrainType == GridMap.BUSH)
-        {
-            Instantiate(bushPrefab, new Vector2(position.x + randomX, position.y + randomY), Quaternion.identity);
-        }
-        if (terrainType == GridMap.ROCK)
-        {
-            Instantiate(rocks[Random.Range(0, rocks.Length)], new Vector2(position.x + randomX, position.y + randomY), Quaternion.identity);
-        }
-        if (terrainType == GridMap.FOREST)
-        {
-            Instantiate(trees[Random.Range(0, trees.Length)], new Vector2(position.x + randomX, position.y + randomY), Quaternion.identity);
-        }
-    }
-
-    void SpawnTerrainWalker(GridMap terrainType)
-    {
-        int numOfWalker = Random.Range(1, 4);
-        int walkerCount = 0;
-
-
-        //Creates a random number of Walkers. Min 2, Max 4
-        // As long as the Random number of walker is not reached...
-        while (walkerCount <= numOfWalker)
-        {
-            // get random position for a terrain walker
-            Vector3Int pos = new Vector3Int(Random.Range(1, gridHandler.GetLength(0) - 1), Random.Range(1, gridHandler.GetLength(1) - 1), terrainElevation);
-
-            // if position is on a Floor Tile create a walker
-            if (gridHandler[pos.x, pos.y] == GridMap.FLOOR)
-            {
-
-                // create new terrain walker and add it to the list of terrain walkers
-                WalkerObject newTerrainWalker = new WalkerObject(new Vector2(pos.x, pos.y), GetDirection(), 0.5f, terrainType);
-                PlaceTerrainSprite(pos, terrainType);
-                gridHandler[pos.x, pos.y] = terrainType;
-                terrainTileCount++;
-
-                walkers.Add(newTerrainWalker);
-                walkerCount++;
-            }
         }
     }
 

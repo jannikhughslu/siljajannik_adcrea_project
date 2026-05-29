@@ -16,9 +16,11 @@ public class NodeGenerator : MonoBehaviour
         {
             for (int y = 0; y < grid.GetLength(1); y++)
             {
-                if (grid[x, y] == GridMap.FLOOR)
+                float nodeWeight = GetNodeWeight(grid[x, y]);
+                if (nodeWeight > 0f)
                 {
                     Node newNode = Instantiate(nodeprefab, new Vector2(x + 0.5f, y + 0.5f), Quaternion.identity);
+                    newNode.weight = nodeWeight;
                     nodeList.Add(newNode);
                 }
             }
@@ -50,6 +52,19 @@ public class NodeGenerator : MonoBehaviour
         if (from == to) { return; }
 
         from.neighbours.Add(to);
+    }
+
+
+    float GetNodeWeight(GridMap type)
+    {
+        switch (type)
+        {
+            case GridMap.FLOOR: return 1f;
+            case GridMap.BUSH: return 2f;
+            case GridMap.FOREST: return 3f;
+            case GridMap.ROCK: return 5f;
+            default: return 0f;  // EMPTY/WATER = kein Node
+        }
     }
 
 

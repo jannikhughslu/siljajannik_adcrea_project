@@ -5,6 +5,7 @@ public class Node : MonoBehaviour
 {
     public Node cameFrom;
     public List<Node> neighbours;
+    public float weight = 1f;
 
     // gScore is the cost from the start node to the current node
     // in other words: how many steps it took to get from the start node to the current node
