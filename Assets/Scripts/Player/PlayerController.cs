@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player_Controller : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
      // Movement speed of player character
     public float speed = 5.0f;
@@ -64,6 +64,21 @@ public class Player_Controller : MonoBehaviour
         transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
     }
 
+    // Move the existing player to the center node after the map is ready
+    public void SetPlayerNodes(Node center, Node target)
+    {
+
+        if (center == null)
+        {
+            Debug.LogWarning("Center node is null. Cannot set player position.");
+            return;
+        }
+        transform.position = center.transform.position;
+        currentNode = center;
+        targetNode = target;
+    }
+
+
     // keeps the path up to date based on the node the player is currently closest to
     public void CreatePath()
     {
@@ -80,12 +95,10 @@ public class Player_Controller : MonoBehaviour
             currentNode = FindClosestNode();
         }
 
-        if (targetNode == null || currentNode == targetNode)
+        if (targetNode == null)
         {
-            // select initial target node to be random node that is not the current node
-            targetNode = PickRandomTargetNode(currentNode);
+            return;
         }
-
 
         Node nearestNode = FindClosestNode();
         if (nearestNode != null && nearestNode != currentNode)
@@ -97,7 +110,7 @@ public class Player_Controller : MonoBehaviour
 
                 if (currentNode == targetNode)
                 {
-                    targetNode = PickRandomTargetNode(currentNode);
+                    Debug.Log("erreicht");
                 }
             }
         }
@@ -107,10 +120,10 @@ public class Player_Controller : MonoBehaviour
             return;
         }
 
-        List<Node> newPath = AStarManager.instance.generatePath(currentNode, targetNode);
-        if (newPath != null)
+        if (path.Count == 0 || path[0] != currentNode || path[path.Count - 1] != targetNode)
         {
-            path = newPath;
+            List<Node> newPath = AStarManager.instance.generatePath(currentNode, targetNode);
+            if (newPath != null) path = newPath;
         }
     }
 
@@ -130,18 +143,6 @@ public class Player_Controller : MonoBehaviour
         }
 
         return closestNode;
-    }
-
-    Node PickRandomTargetNode(Node startNode)
-    {
-        Node randomNode = cachedNodes[Random.Range(0, cachedNodes.Length)];
-
-        while (randomNode == startNode)
-        {
-            randomNode = cachedNodes[Random.Range(0, cachedNodes.Length)];
-        }
-
-        return randomNode;
     }
 
     private void OnDrawGizmos()

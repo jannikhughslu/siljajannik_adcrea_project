@@ -19,6 +19,8 @@ public class WalkerManager : MonoBehaviour
     public TilemapPainter tmPainter;
     public SpritePainter spPainter;
     public NodeGenerator nodeGenerator;
+    public PlayerController player;
+
 
     public int mapWidth = 30;
     public int mapHeight = 30;
@@ -133,7 +135,15 @@ public class WalkerManager : MonoBehaviour
             ChanceToChangeDir();
             UpdatePosition();
         }
+
         nodeGenerator.CreateNodes(gridHandler);
+        
+        Node center = nodeGenerator.GetNodeAtCenter(gridHandler);
+        Node farthestNode = DFSManager.instance.FindFarthestNode(center);
+        spPainter.SpawnGoldStone(farthestNode.transform.position);
+
+        player.SetPlayerNodes(center, farthestNode);
+
         canDrawGizmos = true;
     }
 

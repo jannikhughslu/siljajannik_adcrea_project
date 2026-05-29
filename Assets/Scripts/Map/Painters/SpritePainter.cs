@@ -7,6 +7,7 @@ public class SpritePainter : MonoBehaviour
     public GameObject bushPrefab;
     public GameObject[] trees;
     public GameObject[] rocks;
+    public GameObject goldStonePrefab;
     
 
     public void PlaceTerrainSprite(Vector3Int position, GridMap terrainType)
@@ -26,5 +27,10 @@ public class SpritePainter : MonoBehaviour
         {
             Instantiate(trees[Random.Range(0, trees.Length)], new Vector2(position.x + randomX, position.y + randomY), Quaternion.identity);
         }
+    }
+
+    public void SpawnGoldStone(Vector3 position)
+    {
+        Instantiate(goldStonePrefab, new Vector2(position.x, position.y), Quaternion.identity);
     }
 }

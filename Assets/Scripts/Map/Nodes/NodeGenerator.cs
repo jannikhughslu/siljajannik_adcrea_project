@@ -6,8 +6,6 @@ public class NodeGenerator : MonoBehaviour
 
     public Node nodeprefab;
     public List<Node> nodeList;
-
-    public Player_Controller player;
     
     // Instanciate a node prefab for every floor tile and add it to a list of nodes.
     public void CreateNodes(GridMap[,] grid)
@@ -43,7 +41,6 @@ public class NodeGenerator : MonoBehaviour
                 }
             }
         }
-        SpawnPlayerAtCenter(grid);
     }
 
     // connect two nodes by adding the target node to the neighbours list of the from node
@@ -67,17 +64,8 @@ public class NodeGenerator : MonoBehaviour
         }
     }
 
-
-    
-
-    // Move the existing player to the center node after the map is ready
-    void SpawnPlayerAtCenter(GridMap[,] grid)
+    public Node GetNodeAtCenter(GridMap[,] grid)
     {
-        if (player == null || nodeList == null || nodeList.Count == 0)
-        {
-            return;
-        }
-
         Vector2Int center = new Vector2Int(grid.GetLength(0) / 2, grid.GetLength(1) / 2);
         Node centerNode = null;
 
@@ -90,13 +78,6 @@ public class NodeGenerator : MonoBehaviour
                 break;
             }
         }
-
-        if (centerNode == null)
-        {
-            centerNode = nodeList[0];
-        }
-
-        player.transform.position = centerNode.transform.position;
-        player.currentNode = centerNode;
+        return centerNode;
     }
 }
