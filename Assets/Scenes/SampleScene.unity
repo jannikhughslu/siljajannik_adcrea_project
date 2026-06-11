@@ -155,11 +155,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b1788418059a3c489c7f9151d0a7233, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tmPainter: {fileID: 42280235}
-  spPainter: {fileID: 42280237}
+  tilemapPainter: {fileID: 42280235}
+  spritePainter: {fileID: 42280237}
   mapWidth: 70
   mapHeight: 50
-  maxWalkers: 5
+  maxTileWalkers: 10
   fillPercent: 0.4
   waitTime: 0
 --- !u!4 &42280233
@@ -270,13 +270,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bushPrefab: {fileID: 2495560268967211850, guid: 60df322e9cfb8f448b87fd50bfc1dddc, type: 3}
-  trees:
+  treePrefabs:
   - {fileID: 8244771637098319898, guid: 042a5bc6e9da4eb45a6da18e2d239b55, type: 3}
   - {fileID: 2434734051478339092, guid: 90ff814d15b1a114a8a401b3e6ca28ee, type: 3}
-  rocks:
-  - {fileID: 1158353920183084679, guid: 9a207606dd2b9bb45bc0a9215a50af90, type: 3}
-  - {fileID: 3408952171744800046, guid: 35f5f7b37a989f74e9ee3a653730f17e, type: 3}
+  rockPrefabs:
   - {fileID: 3455157008954625180, guid: 0f7b6f4757f70cc4eb0eb416ab825961, type: 3}
+  - {fileID: 3408952171744800046, guid: 35f5f7b37a989f74e9ee3a653730f17e, type: 3}
+  - {fileID: 1158353920183084679, guid: 9a207606dd2b9bb45bc0a9215a50af90, type: 3}
   goldStonePrefab: {fileID: 1420694364214395181, guid: 655a0c4494f3eba47b148a340425b5b3, type: 3}
 --- !u!114 &42280238
 MonoBehaviour:
