@@ -128,6 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 42280233}
+  - component: {fileID: 42280240}
   - component: {fileID: 42280232}
   - component: {fileID: 42280235}
   - component: {fileID: 42280237}
@@ -156,13 +157,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tmPainter: {fileID: 42280235}
   spPainter: {fileID: 42280237}
-  nodeGenerator: {fileID: 42280236}
-  player: {fileID: 1313212601}
   mapWidth: 70
   mapHeight: 50
   maxWalkers: 5
-  tileCount: 0
-  terrainTileCount: 0
   fillPercent: 0.4
   waitTime: 0
 --- !u!4 &42280233
@@ -305,6 +302,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00b24174a3d4e514091262b9995b142c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &42280240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42280231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4095440ed1ee88c458c56f1dc8ea4620, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkerManager: {fileID: 42280232}
+  nodeGenerator: {fileID: 42280236}
+  spPainter: {fileID: 42280237}
+  player: {fileID: 1313212601}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

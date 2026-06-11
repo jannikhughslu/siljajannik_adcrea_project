@@ -3,22 +3,19 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-     // Movement speed of player character
     public float speed = 5.0f;
-    // facing Direction = player scale X value. 1 = facingRight
-    public int facingDirection = 1;
+    public int facingDirection = 1; // 1 = facing right; -1 = facing left
+
     private Rigidbody2D playerRB;
     private Animator playerAnimator;
     private LineRenderer navLineRenderer;
 
-    // Node related variables
     public Node currentNode;
     public Node targetNode;
     public List<Node> path = new List<Node>();
     public float nodeReachDistance = 0.5f;
 
-    
-    
+
     void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
@@ -27,58 +24,44 @@ public class PlayerController : MonoBehaviour
     }
     
 
-
     // Update is called once per frame
     void Update()
     {
-        // key input: a/< left: -1; d/> right: 1; no input: 0;
-        float horizontalInput = Input.GetAxis("Horizontal");
-        // key input: s/< down: -1; w/> up 1; no input: 0;
-        float verticalInput = Input.GetAxis("Vertical");
+        float horizontalInput = Input.GetAxis("Horizontal"); // keys: a= -1 and d= 1
+        float verticalInput = Input.GetAxis("Vertical"); // keys: s= -1 and w= 1
 
-        // Check if horizontal Input switches from left to right
-        // Check input and see if it doesn't match current localScale.x (facingDirection)
         if (horizontalInput > 0 && transform.localScale.x < 0 ||
-        horizontalInput < 0 && transform.localScale.x > 0)
+        horizontalInput < 0 && transform.localScale.x > 0) // Flip player if input is right but facing left or input is left but facing right
         {
             FlipPlayer();
         }
 
-        // Set input values to self definded variables "horizontal" and "vertical" in animator
-        // Animator animates if input 0<. Input can sometimes be >0.
-        // Mathf.Abs() turn number into absolute (positive) numbers.
-        // Logic now: If input =! 0 -> animate
+        // animate if input =! 0 -> animate
         playerAnimator.SetFloat("horizontal", Mathf.Abs(horizontalInput));
         playerAnimator.SetFloat("vertical", Mathf.Abs(verticalInput));
 
-        // Move player
-        playerRB.linearVelocity = new Vector2(horizontalInput, verticalInput) * speed;
+        playerRB.linearVelocity = new Vector2(horizontalInput, verticalInput) * speed; // move player
 
         CreatePath();
     }
 
     void FlipPlayer()
     {
-        // Switch facingDirection positive <---> negative
-        facingDirection *= -1;
-        // Set localScale.x to facingDirection. Keep .y and .z
+        facingDirection *= -1; // facingDirection positive <---> negative
         transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
     }
 
-    // Move the existing player to the center node after the map is ready
     public void SetPlayerNodes(Node center, Node target)
     {
-
         if (center == null)
         {
             Debug.LogWarning("Center node is null. Cannot set player position.");
             return;
         }
-        transform.position = center.transform.position;
+        transform.position = center.transform.position; // set player to center of map
         currentNode = center;
         targetNode = target;
     }
-
 
     public void CreatePath()
     {
@@ -89,8 +72,7 @@ public class PlayerController : MonoBehaviour
 
         if (currentNode == null)
         {
-            // select initial node to be closest node to player
-            currentNode = FindClosestNode();
+            currentNode = FindClosestNode(); // initial node is closest node to player
         }
 
         Node nearestNeighbour = FindClosestNeighbour(currentNode.neighbours);

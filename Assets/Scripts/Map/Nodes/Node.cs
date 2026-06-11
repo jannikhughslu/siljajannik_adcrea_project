@@ -7,14 +7,9 @@ public class Node : MonoBehaviour
     public List<Node> neighbours;
     public float weight = 1f;
 
-    // gScore is the cost from the start node to the current node
-    // in other words: how many steps it took to get from the start node to the current node
-    public float gScore;
-    // hScore is the estimated cost from the current node to the target node
-    // in other words: how many steps it would take to get from the current node to the target node if there were no obstacles in the way
-    public float hScore;
-    // FScore is the sum of gScore and hScore, and is used to determine which node to explore next in the A* algorithm
-    public float FScore()
+    public float gScore; // cost from start node to current node
+    public float hScore; // estimated cost from the current node to the target node
+    public float FScore() // used to determine which node to explore next in the A* algorithm
     {
         return gScore + hScore;
     }

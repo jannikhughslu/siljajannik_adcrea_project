@@ -5,13 +5,14 @@ public class SpritePainter : MonoBehaviour
 
     // terrain Prefab
     public GameObject bushPrefab;
-    public GameObject[] trees;
-    public GameObject[] rocks;
+    public GameObject[] treePrefabs;
+    public GameObject[] rockPrefabs;
     public GameObject goldStonePrefab;
     
 
-    public void PlaceTerrainSprite(Vector3Int position, GridMap terrainType)
+    public void PlaceSprite(Vector3Int position, GridMap terrainType)
     {
+        // Randomness of position on tile
         float randomX = Random.Range(0f, 0.7f);
         float randomY = Random.Range(0f, 0.7f);
 
@@ -21,11 +22,11 @@ public class SpritePainter : MonoBehaviour
         }
         if (terrainType == GridMap.ROCK)
         {
-            Instantiate(rocks[Random.Range(0, rocks.Length)], new Vector2(position.x + randomX, position.y + randomY), Quaternion.identity);
+            Instantiate(rockPrefabs[Random.Range(0, rockPrefabs.Length)], new Vector2(position.x + randomX, position.y + randomY), Quaternion.identity);
         }
         if (terrainType == GridMap.FOREST)
         {
-            Instantiate(trees[Random.Range(0, trees.Length)], new Vector2(position.x + randomX, position.y + randomY), Quaternion.identity);
+            Instantiate(treePrefabs[Random.Range(0, treePrefabs.Length)], new Vector2(position.x + randomX, position.y + randomY), Quaternion.identity);
         }
     }
 

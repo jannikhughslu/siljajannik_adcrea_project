@@ -2,9 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-
-
-
 [System.Serializable]
 public class TileEntry
 {
@@ -14,13 +11,9 @@ public class TileEntry
 
 public class TilemapPainter : MonoBehaviour
 {
-
     public Tilemap tilemap;
-
     [SerializeField] private TileEntry[] tileEntries;
-
     private Dictionary<TileId, Tile> tilesById;
-
 
     private void Awake()
     {
@@ -59,7 +52,6 @@ public class TilemapPainter : MonoBehaviour
         return tilesById[randomId];
     }
 
-
     public void SetTileById(Vector3Int position, TileId id)
     {
         if (tilesById.TryGetValue(id, out Tile tile))
@@ -72,10 +64,6 @@ public class TilemapPainter : MonoBehaviour
         }
     }
 
-
-    // After floor layout is created, loop through grid and check if there is a floor tile. 
-    // If there is, check if there are empty tiles next to it. 
-    // If there are, set them to wall tiles.
     public void CreateWalls(GridMap[,] grid)
     {
         for (int x = 0; x < grid.GetLength(0) - 1; x++)
@@ -160,7 +148,6 @@ public class TilemapPainter : MonoBehaviour
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), GetTileById(TileId.GRASS_RBL));
                     }
-
                 }
             }
         }

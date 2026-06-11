@@ -14,39 +14,30 @@ public class BFSManager : MonoBehaviour
         }
         instance = this;
     }
-
-    // Returns the node that is farthest from the start node by shortest path (hop count) using BFS.
     public Node FindFarthestNode(Node startNode)
     {
         if (startNode == null) return null;
 
         Node farthestNode = startNode;
 
-        var queue = new Queue<(Node node, int depth)>();
-        var visited = new HashSet<Node>();
+        Queue<Node> queue = new Queue<Node>();
+        HashSet<Node> visited = new HashSet<Node>();
 
-        queue.Enqueue((startNode, 0));
+        queue.Enqueue(startNode);
         visited.Add(startNode);
-
-        int maxDepth = 0;
 
         while (queue.Count > 0)
         {
-            var (current, depth) = queue.Dequeue();
+            farthestNode = queue.Dequeue(); // get next node in the queue
 
-            if (depth > maxDepth)
+            foreach (Node neighbour in farthestNode.neighbours)
             {
-                maxDepth = depth;
-                farthestNode = current;
-            }
-
-            foreach (Node neighbour in current.neighbours)
-            {
-                if (visited.Add(neighbour))
-                    queue.Enqueue((neighbour, depth + 1));
+                if (visited.Add(neighbour)) // Add returns false if the neighbour was already visited
+                { 
+                    queue.Enqueue(neighbour);
+                }
             }
         }
-
-        return farthestNode;
+        return farthestNode; // return last node processed
     }
 }

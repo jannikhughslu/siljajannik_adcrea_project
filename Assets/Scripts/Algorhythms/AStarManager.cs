@@ -23,10 +23,8 @@ public class AStarManager : MonoBehaviour
 
     public List<Node> generatePath(Node startNode, Node targetNode)
     {
-        // openSet is a list of nodes that are being considered for the path.
-        List<Node> openSet = new List<Node>();
-        // hashset to check if openset contains node => faster
-        HashSet<Node> inOpenSet = new HashSet<Node>();
+        List<Node> candidates = new List<Node>(); // list of considered nodes for the path.
+        HashSet<Node> inCandidates = new HashSet<Node>(); // to check if candidate already exists -> faster
 
         // STEP 1.
         foreach (Node node in allNodes)
@@ -35,33 +33,30 @@ public class AStarManager : MonoBehaviour
         }
         startNode.gScore = 0;
         startNode.hScore = Vector2.Distance(startNode.transform.position, targetNode.transform.position); // hScore estimated airdistance
-        openSet.Add(startNode);
-        inOpenSet.Add(startNode);
+        candidates.Add(startNode);
+        inCandidates.Add(startNode);
 
         
-        while(openSet.Count > 0)
+        while(candidates.Count > 0)
         {
             // STEP 2
             int lowestFScore = 0;
             // find node with the lowest fScore in openSet and set lowestFScore to its index
-            // Part of the algorithm that determines where the shortest path comes from
-            for (int i = 1; i < openSet.Count; i++)
+            // to determines where the shortest path comes from
+            for (int i = 1; i < candidates.Count; i++)
             {
-                if (openSet[i].FScore() < openSet[lowestFScore].FScore())
+                if (candidates[i].FScore() < candidates[lowestFScore].FScore())
                 {
                     lowestFScore = i;
                 }
             }
 
-            // currentNode is the one withe lowest current fScore
-            Node currentNode = openSet[lowestFScore];
-            openSet.Remove(currentNode);
-            inOpenSet.Remove(currentNode);
+            Node currentNode = candidates[lowestFScore];
+            candidates.Remove(currentNode);
+            inCandidates.Remove(currentNode);
 
             // Step 4
-            // if we have reached the target node, 
-            // return optimal path by following the cameFrom nodes from the target node back to the start node
-            // reverse path so it goes from start node to target node
+            // if target node reached 
             if (currentNode == targetNode)
             {
                 List<Node> path = new List<Node>();
@@ -74,14 +69,14 @@ public class AStarManager : MonoBehaviour
                     
                 }
                 path.Reverse();
-                return path;
+                return path; // return reversed optimal path
             }
 
             // STEP 3
             // check neighbours of current node and update their gScore and hScore if we have found a better path to them
             foreach(Node neighbour in currentNode.neighbours)
             {
-                // heldGScore is used to check if the path from current node is better than any previously known path to the neighbour.
+                // heldGScore to check if path from current node is better than  previously known paths of neighbour.
                 float heldGScore = currentNode.gScore + Vector2.Distance(currentNode.transform.position, neighbour.transform.position) * neighbour.weight;
                 if (heldGScore < neighbour.gScore)
                 {
@@ -89,18 +84,17 @@ public class AStarManager : MonoBehaviour
                     neighbour.gScore = heldGScore;
                     neighbour.hScore = Vector2.Distance(neighbour.transform.position, targetNode.transform.position);
 
-                    // if the neighbour is not already considered, add it
-                    if (!inOpenSet.Contains(neighbour))
+                    // if the neighbour is not already considered
+                    if (!inCandidates.Contains(neighbour))
                     {
-                        openSet.Add(neighbour);
-                        inOpenSet.Add(neighbour);
+                        candidates.Add(neighbour);
+                        inCandidates.Add(neighbour);
                     }
                 }
             }
         }
         return null;
     }
-
 
     public void RegisterNode(Node node)
     {

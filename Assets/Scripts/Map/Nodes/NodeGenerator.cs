@@ -26,15 +26,13 @@ public class NodeGenerator : MonoBehaviour
         CreateConnections(grid);
     }
 
-    // loop through list of nodes and call ConnectNodes() if they are next to each other
     void CreateConnections(GridMap[,] grid)
     {
         for (int i = 0; i < nodeList.Count; i++)
         {
             for (int j = i + 1; j < nodeList.Count; j++)
             {
-                // if the distance between two nodes is smaller than or equal to 1, connect them both ways
-                if (Vector2.Distance(nodeList[i].transform.position, nodeList[j].transform.position) <= 1.5f)
+                if (Vector2.Distance(nodeList[i].transform.position, nodeList[j].transform.position) <= 1.5f) // connect if nodes are adjacent (including diagonals)
                 {
                     ConnectNodes(nodeList[i], nodeList[j]);
                     ConnectNodes(nodeList[j], nodeList[i]);
@@ -43,7 +41,6 @@ public class NodeGenerator : MonoBehaviour
         }
     }
 
-    // connect two nodes by adding the target node to the neighbours list of the from node
     void ConnectNodes(Node from, Node to)
     {
         if (from == to) { return; }
