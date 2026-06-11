@@ -9,13 +9,13 @@ public class PlayerController : MonoBehaviour
     public int facingDirection = 1;
     private Rigidbody2D playerRB;
     private Animator playerAnimator;
+    private LineRenderer navLineRenderer;
 
     // Node related variables
-    private Node[] cachedNodes;
     public Node currentNode;
     public Node targetNode;
     public List<Node> path = new List<Node>();
-    public float nodeReachDistance = 0.15f;
+    public float nodeReachDistance = 0.5f;
 
     
     
@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     {
         playerRB = GetComponent<Rigidbody2D>();
         playerAnimator = GetComponent<Animator>();
+        navLineRenderer = GetComponent<LineRenderer>();
     }
     
 
@@ -79,15 +80,11 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // keeps the path up to date based on the node the player is currently closest to
     public void CreatePath()
     {
-        if (cachedNodes == null || cachedNodes.Length == 0)
+        if (AStarManager.instance == null || targetNode == null)
         {
-            cachedNodes = FindObjectsByType<Node>(FindObjectsSortMode.None);
-            if (cachedNodes == null || cachedNodes.Length == 0){
-                return;
-            }
+            return;
         }
 
         if (currentNode == null)
@@ -96,18 +93,14 @@ public class PlayerController : MonoBehaviour
             currentNode = FindClosestNode();
         }
 
-        if (targetNode == null)
+        Node nearestNeighbour = FindClosestNeighbour(currentNode.neighbours);
+        if (nearestNeighbour != null && nearestNeighbour != currentNode)
         {
-            return;
-        }
-
-        Node nearestNode = FindClosestNode();
-        if (nearestNode != null && nearestNode != currentNode)
-        {
-            float distanceToNearestNode = Vector2.Distance(transform.position, nearestNode.transform.position);
-            if (distanceToNearestNode <= nodeReachDistance)
+            float distToNearestNode = Vector2.Distance(transform.position, nearestNeighbour.transform.position);
+             float distToCurrent = Vector2.Distance(transform.position, currentNode.transform.position);
+            if (distToNearestNode < distToCurrent)
             {
-                currentNode = nearestNode;
+                currentNode = nearestNeighbour;
 
                 if (currentNode == targetNode)
                 {
@@ -116,15 +109,14 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (AStarManager.instance == null || targetNode == null)
-        {
-            return;
-        }
-
         if (path.Count == 0 || path[0] != currentNode || path[path.Count - 1] != targetNode)
         {
             List<Node> newPath = AStarManager.instance.generatePath(currentNode, targetNode);
-            if (newPath != null) path = newPath;
+            if (newPath != null)
+            {
+                path = newPath;
+                DrawPath(path);
+            } 
         }
     }
 
@@ -133,28 +125,37 @@ public class PlayerController : MonoBehaviour
         Node closestNode = null;
         float closestDistance = float.MaxValue;
 
-        for (int i = 0; i < cachedNodes.Length; i++)
+        foreach (Node node in AStarManager.instance.AllNodes)
         {
-            float currentDistance = Vector2.Distance(transform.position, cachedNodes[i].transform.position);
+            float currentDistance = Vector2.Distance(transform.position, node.transform.position);
             if (currentDistance < closestDistance)
             {
                 closestDistance = currentDistance;
-                closestNode = cachedNodes[i];
+                closestNode = node;
             }
         }
-
         return closestNode;
     }
 
-    private void OnDrawGizmos()
+    Node FindClosestNeighbour(List<Node> neighbours)
     {
-        if (path.Count > 0)
+        Node closest = null;
+        float closestDist = float.MaxValue;
+        foreach (Node neighbour in neighbours)
         {
-            Gizmos.color = Color.blue;
-            for (int i = 1; i < path.Count; i++)
-            {
-                Gizmos.DrawLine(path[i].transform.position, path[i - 1].transform.position);
-            }
+            float dist = Vector2.Distance(transform.position, neighbour.transform.position);
+            if (dist < closestDist) { closestDist = dist; closest = neighbour; }
+        }
+        return closest;
+    }
+
+
+    void DrawPath(List<Node> path)
+    {
+        navLineRenderer.positionCount = path.Count;
+        for (int i = 0; i < path.Count; i++)
+        {
+            navLineRenderer.SetPosition(i, path[i].transform.position);
         }
     }
 }

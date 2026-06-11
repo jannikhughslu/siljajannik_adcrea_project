@@ -18,4 +18,14 @@ public class Node : MonoBehaviour
     {
         return gScore + hScore;
     }
+
+    private void OnEnable()
+    {
+        AStarManager.instance.RegisterNode(this);
+    }
+
+    private void OnDisable()
+    {
+        AStarManager.instance.UnregisterNode(this);
+    }
 }
